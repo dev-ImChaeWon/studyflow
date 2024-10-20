@@ -1,27 +1,16 @@
-package com.studyflow.entity;
+package com.studyflow.dto;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import com.studyflow.entity.Student;
+import com.studyflow.entity.Subject;
 
-@Entity
-public class Homework {
+public class HomeworkDTO {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer homeworkId;
 
-	@ManyToOne
-	@JoinColumn(name = "subject_id")
 	private Subject subject;
 
-	@ManyToOne
-	@JoinColumn(name = "student_id", referencedColumnName = "student_id")
 	private Student student;
 
 	private Integer homeworkPage;
