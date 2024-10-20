@@ -1,25 +1,16 @@
-package com.studyflow.entity;
+package com.studyflow.dto;
 
 import java.util.Date;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+public class AttendanceDTO {
 
-@Entity
-public class Attendance {
-
-	@Id
 	private Integer studentId;
 
 	private String isAttend;
 
 	private Date attendanceDate;
 
-	@ManyToOne
-	@JoinColumn(name = "student_id", referencedColumnName = "student_id", insertable = false, updatable = false)
-	private Student student;
+	private StudentDTO student;
 
 	public Integer getStudentId() {
 		return studentId;
@@ -45,11 +36,11 @@ public class Attendance {
 		this.attendanceDate = attendanceDate;
 	}
 
-	public Student getStudent() {
+	public StudentDTO getStudent() {
 		return student;
 	}
 
-	public void setStudent(Student student) {
+	public void setStudent(StudentDTO student) {
 		this.student = student;
 	}
 
