@@ -11,7 +11,7 @@ import jakarta.persistence.ManyToOne;
 public class Attendance {
 
 	@Id
-	private Integer studentId;
+	private Integer id;
 
 	private String isAttend;
 
@@ -21,12 +21,12 @@ public class Attendance {
 	@JoinColumn(name = "student_id", referencedColumnName = "student_id", insertable = false, updatable = false)
 	private Student student;
 
-	public Integer getStudentId() {
-		return studentId;
+	public Integer getId() {
+		return id;
 	}
 
-	public void setStudentId(Integer studentId) {
-		this.studentId = studentId;
+	public void setId(Integer id) {
+		this.id = id;
 	}
 
 	public String getIsAttend() {
