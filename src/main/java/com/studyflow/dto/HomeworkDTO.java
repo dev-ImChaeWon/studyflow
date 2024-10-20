@@ -9,7 +9,7 @@ public class HomeworkDTO {
 
 	private Integer homeworkId;
 
-	private Subject subject;
+	private Subject subject = new Subject();
 
 	private Student student;
 
