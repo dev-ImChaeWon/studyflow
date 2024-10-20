@@ -36,17 +36,18 @@ public class StudentService {
 			studto.setStudentName(tmp.getStudentName());
 
 			List<HomeworkDTO> homework = new ArrayList<>();
+			HomeworkDTO homdto = new HomeworkDTO();
 			for (Homework hm : tmp.getHomework()) {
-				HomeworkDTO homdto = new HomeworkDTO();
 				homdto.setHomeworkId(hm.getHomeworkId());
-				homdto.getStudent().setStudentName(hm.getStudent().getStudentName());
-				homdto.getSubject().setSubjectName(hm.getSubject().getSubjectName());
+				homdto.getSubject().setSubjectId(hm.getSubject().getSubjectId());	// homdto.getSubject() is null 오류 수정중
 				homdto.setHomeworkPage(hm.getHomeworkPage());
+				homdto.setHomeworkDatetime(hm.getHomeworkDatetime());
 				homdto.setCompletedPage(hm.getCompletedPage());
 				homdto.setComment(hm.getComment());
+				homdto.setCompleteDatetime(hm.getCompleteDatetime());
 			}
+			homework.add(homdto);
 			studto.setHomework(homework);
-
 		}
 		return studto;
 	}

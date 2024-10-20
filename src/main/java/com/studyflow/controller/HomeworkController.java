@@ -12,19 +12,20 @@ import com.studyflow.service.StudentService;
 
 @Controller
 public class HomeworkController {
-	
+
+	@Autowired
 	StudentService stus;
 	HomeworkService homs;
-	
-	@Autowired
+
 	public HomeworkController(StudentService stus, HomeworkService homs) {
 		this.stus = stus;
 		this.homs = homs;
 	}
 
-	// id로 학생 숙제 정보를 조회하는 api
+	// id로 해당 학생 전체 숙제 정보를 조회하는 api
 	@GetMapping("/api/student-homework/{id}")
-	public ResponseEntity<StudentDTO> getHomeworkById(@PathVariable("id") int id){
-		return ResponseEntity.status(200).body(null);
+	public ResponseEntity<StudentDTO> getHomeworkById(@PathVariable("id") int id) {
+		return ResponseEntity.status(200).body(stus.getHomeworkById(id));
 	}
+
 }
