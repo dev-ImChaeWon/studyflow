@@ -20,7 +20,7 @@ public class TeacherService {
 		this.tear = tear;
 	}
 
-	public List<TeacherDTO> getTeacherById() {
+	public List<TeacherDTO> getAllTeacher() {
 		
 		List<Teacher> li = tear.findAll();
 		List<TeacherDTO> res = new ArrayList<>();
