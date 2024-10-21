@@ -14,8 +14,11 @@ public class TeacherController {
 	
 	TeacherService teas;
 	
+	// 학원에 등록된 모든 선생님을 조회하는 API
 	@GetMapping("/api/teacher")
 	public ResponseEntity<List<TeacherDTO>> getTeacherById() {	// List<TeacherDTO> 타입으로 
-		return ResponseEntity.status(200).body(null);
+		List<TeacherDTO> res = teas.getTeacherById();
+		
+		return ResponseEntity.status(200).body(res);
 	}
 }
