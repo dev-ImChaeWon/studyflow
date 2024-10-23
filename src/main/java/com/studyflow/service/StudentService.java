@@ -86,4 +86,34 @@ public class StudentService {
 	    }
 	    return studto;
 	}
+	
+	
+	// 학생 목록 조회 API
+	public List<StudentDTO> getAllStudent() {
+		
+		List<Student> li = stur.findAll();
+		List<StudentDTO> res = new ArrayList<>();
+		
+		for(Student s : li) {
+			StudentDTO studto = new StudentDTO();
+			studto.setStudentId(s.getStudentId());
+			studto.setStudentName(s.getStudentName());
+			
+			res.add(studto);
+		}
+		
+		return res;
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
