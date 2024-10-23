@@ -13,10 +13,10 @@ import com.studyflow.service.StudentService;
 @Controller
 public class HomeworkController {
 
-	@Autowired
 	StudentService stus;
 	HomeworkService homs;
 
+	@Autowired
 	public HomeworkController(StudentService stus, HomeworkService homs) {
 		this.stus = stus;
 		this.homs = homs;

@@ -2,6 +2,8 @@ package com.studyflow.entity;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
