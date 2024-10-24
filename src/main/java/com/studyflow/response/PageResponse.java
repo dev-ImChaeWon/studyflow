@@ -1,6 +1,6 @@
 package com.studyflow.response;
 
-import java.time.LocalDateTime;
+import java.sql.Date;
 import java.util.List;
 
 public class PageResponse<T> {
@@ -10,13 +10,13 @@ public class PageResponse<T> {
 	private boolean hasNext;
 	private boolean hasPrevieous;
 	private long totalElements;
-	private LocalDateTime date;
+	private Date date;
 
-	public LocalDateTime getDate() {
+	public Date getDate() {
 		return date;
 	}
 
-	public void setDate(LocalDateTime date) {
+	public void setDate(Date date) {
 		this.date = date;
 	}
 

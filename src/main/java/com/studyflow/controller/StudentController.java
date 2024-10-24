@@ -1,6 +1,6 @@
 package com.studyflow.controller;
 
-import java.time.LocalDateTime;
+import java.sql.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,10 +33,10 @@ public class StudentController {
 	public ResponseEntity<PageResponse<StudentDTO>> getStudent(
 			@RequestParam(name = "page", defaultValue = "1") int page,
 			@RequestParam(name = "size", defaultValue = "10") int size,
-			@RequestParam(name = "date", required = true) LocalDateTime date,
-			@RequestParam(name = "teacher", required = false) String teacherName,
+			@RequestParam(name = "date", defaultValue = "2023-10-01") Date date,
+			@RequestParam(name = "teacherName", required = false) String teacherName,
 			@RequestParam(name = "isEnd", required = false) String isEnd,
-			@RequestParam(name = "student", required = false) String studentName) {
+			@RequestParam(name = "studentName", required = false) String studentName) {
 
 		return ResponseEntity.status(200).body(stus.getStudent(page, size, date, teacherName, isEnd, studentName));
 

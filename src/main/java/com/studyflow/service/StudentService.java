@@ -1,6 +1,9 @@
 package com.studyflow.service;
 
-import java.time.LocalDateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +26,8 @@ import com.studyflow.response.PageResponse;
 
 @Service
 public class StudentService {
+	
+//	private static final Logger logger = LoggerFactory.getLogger(StudentService.class);
 
 	TeacherRepository tear;
 	StudentRepository stur;
@@ -86,31 +91,40 @@ public class StudentService {
 //		}
 //		return res;
 //	}
-	public PageResponse<StudentDTO> getStudent(int page, int size, LocalDateTime date, String teacherName, String isEnd,
+	public PageResponse<StudentDTO> getStudent(int page, int size, Date date, String teacherName, String isEnd,
 			String studentName) {
-		String findByTeacherPattern = "%" + teacherName + "%";
-		String findByStudentPattern = "%" + studentName + "%";
+		String findByTeacherPattern = (teacherName != null && !teacherName.trim().isEmpty() && teacherName != "") ? "%" + teacherName.trim() + "%" : null;
+		String findByStudentPattern = (studentName != null && !studentName.trim().isEmpty() && studentName != "") ? "%" + studentName.trim() + "%" : null;
 
+		// 로그 출력
+//		logger.info("Received teacherName: {}", teacherName);
+//	    logger.info("findByTeacherPattern: {}", findByTeacherPattern);
+//	    logger.info("Received studentName: {}", studentName);
+//	    logger.info("findByStudentPattern: {}", findByStudentPattern);
+		
 		Sort s = Sort.by(Sort.Order.asc("studentId"));
 		PageRequest pr = PageRequest.of(page - 1, size, s);
 
 		Page<Student> res = null;
-		if (findByTeacherPattern == null || findByTeacherPattern.equals("")) { // 선생님 이름이 param에 없을 때
-			if (findByStudentPattern == null || findByStudentPattern.equals("")) { // 선생님 이름이 param에 없으면서 학생이름도 param에
-																					// 없을 때
+		
+		if (findByTeacherPattern == null) { // teacherName 이 없을 때
+			if (findByStudentPattern == null) {
 				// 선생님 이름 X, 학생 이름 X
 				res = stur.findAllBy(pr);
 			} else {
 				// 선생님 이름 X, 학생 이름 O
+//				logger.info("Searching for students with name pattern: {}", findByStudentPattern);
 				res = stur.findAllByStudentName(findByStudentPattern, pr);
 			}
-		} else { // 선생님 이름이 param에 있을 때
-			if (findByStudentPattern == null || findByStudentPattern.equals("")) {
+		} else { // teacherName 이 있을 때
+			if (findByStudentPattern == null) {
 				// 선생님 이름 O, 학생 이름 X
-//				res = stur.findAllStudentByTeacher(findByTeacherPattern, pr);
+//				logger.info("Searching for students taught by teacher: {}", findByTeacherPattern);
+				res = stur.findAllStudentByTeacher(findByTeacherPattern, pr);
 			} else {
 				// 선생님 이름 O, 학생 이름 O
-//				res = stur.findAllStudentByTeacherAndStudent(findByTeacherPattern, findByStudentPattern, pr);
+//				logger.info("Searching for students taught by teacher: {} and with name pattern: {}", findByTeacherPattern, findByStudentPattern);
+				res = stur.findAllStudentByTeacherAndStudent(findByTeacherPattern, findByStudentPattern, pr);
 			}
 		}
 
@@ -126,7 +140,9 @@ public class StudentService {
 			for (Homework hw : stu.getHomework()) {
 				HomeworkDTO hwdto = new HomeworkDTO();
 				hwdto.setHomeworkId(hw.getHomeworkId());
-				hwdto.setSubject(hw.getSubject());
+				Subject subject = new Subject();
+				subject.setSubjectName(hw.getSubject().getSubjectName());
+				hwdto.setSubject(subject);
 				hwdto.setHomeworkPage(hw.getHomeworkPage());
 				hwdto.setCompletedPage(hw.getCompletedPage());
 				hwdto.setComment(hw.getComment());
@@ -144,7 +160,7 @@ public class StudentService {
 		studentPage.setHasPrevieous(page > 1);
 		studentPage.setTotalElements(res.getTotalElements());
 		studentPage.setTotalPages(res.getTotalPages());
-		studentPage.setDate(date.now());
+//		studentPage.setDate();
 
 		return studentPage;
 	}
