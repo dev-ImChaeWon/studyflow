@@ -92,6 +92,16 @@ public class StudentService {
 //		return res;
 //	}
 
+	// 개선안
+	public void getStudent2(int page, int size, Date date, String teacherName, String homeworkStatus,
+			String studentName) {
+		// 페이지 --> 학생을 조회하면 homework는 딸려온다
+		// 학생조회할때 특정 날짜로, 완료여부 학생 조회하는 api 
+		
+		
+		
+	}
+	
 	public PageResponse<StudentDTO> getStudent(int page, int size, Date date, String teacherName, String homeworkStatus,
 			String studentName) {
 		String findByTeacherPattern = (teacherName != null && !teacherName.trim().isEmpty() && teacherName != "")
