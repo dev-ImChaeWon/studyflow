@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -51,8 +52,7 @@ public class StudentService {
 	public List<AttendanceDTO> getIsAttendance() {
 		List<Attendance> attli = attr.findAll();
 		List<AttendanceDTO> attres = new ArrayList<>();
-		List<Student> stuli = stur.findAll();
-//			List<StudentDTO> stures = new ArrayList<>();
+//		List<StudentDTO> stures = new ArrayList<>();
 
 //			for (Student s : stuli) {
 //				StudentDTO studto = new StudentDTO();
@@ -74,17 +74,12 @@ public class StudentService {
 			attdto.setStudentId(a.getStudent().getStudentId());
 			attdto.setIsAttend(a.getIsAttend());
 
-			for (Student s : stuli) {
-				StudentDTO studto = new StudentDTO();
-//					studto.setStudentId(s.getStudentId());
-				studto.setStudentName(s.getStudentName());
+			StudentDTO studto = new StudentDTO();
+			studto.setStudentName(a.getStudent().getStudentName());
 
-//					stures.add(studto);
-			}
-
+			attdto.setStudent(studto);
 			attres.add(attdto);
 		}
-
 		return attres;
 	}
 
@@ -151,6 +146,7 @@ public class StudentService {
 		PageRequest pr = PageRequest.of(page - 1, size, s);
 
 		Page<Student> res = null;
+//		res = stur.findAllByHomeworkDatetime(date, pr);
 
 		if (findByTeacherPattern == null) { // teacherName 이 없을 때
 			if (findByStudentPattern == null) {
@@ -281,6 +277,8 @@ public class StudentService {
 			studentPage.setHasPrevieous(page > 1);
 			studentPage.setTotalElements(res.getTotalElements());
 			studentPage.setTotalPages(res.getTotalPages());
+			
+			
 
 			return studentPage;
 
