@@ -213,6 +213,7 @@ public class StudentService {
 		        }
 		    }
 
+			// 전체 갯수
 		    PageResponse<StudentDTO> studentPage = new PageResponse<>();
 		    studentPage.setList(notCompleteLi);
 		    studentPage.setCurrentPage(page);
