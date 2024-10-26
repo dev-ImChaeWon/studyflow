@@ -29,6 +29,7 @@ public class StudentController {
 //		
 //		return ResponseEntity.status(200).body(res);
 //	}
+	
 	@GetMapping("/api/student")
 	public ResponseEntity<PageResponse<StudentDTO>> getStudent(
 			@RequestParam(name = "page", defaultValue = "1") int page,

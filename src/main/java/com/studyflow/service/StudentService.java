@@ -91,6 +91,8 @@ public class StudentService {
 //		}
 //		return res;
 //	}
+	
+	
 	public PageResponse<StudentDTO> getStudent(int page, int size, Date date, String teacherName, String isEnd,
 			String studentName) {
 		String findByTeacherPattern = (teacherName != null && !teacherName.trim().isEmpty() && teacherName != "") ? "%" + teacherName.trim() + "%" : null;

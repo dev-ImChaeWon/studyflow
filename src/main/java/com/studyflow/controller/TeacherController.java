@@ -20,10 +20,10 @@ public class TeacherController {
 		this.teas = teas;
 	}
 	
-	// 학원에 등록된 모든 선생님을 조회하는 API
+	// 학원에 등록된 user_role이 T인 선생님을 조회하는 API
 	@GetMapping("/api/teacher")
-	public ResponseEntity<List<TeacherDTO>> getAllTeacher() {	// List<TeacherDTO> 타입으로 
-		List<TeacherDTO> res = teas.getAllTeacher();
+	public ResponseEntity<List<TeacherDTO>> getTeacherT() {	// List<TeacherDTO> 타입으로 
+		List<TeacherDTO> res = teas.getTeacherT();
 		
 		return ResponseEntity.status(200).body(res);
 	}
