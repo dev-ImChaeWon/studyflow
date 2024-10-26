@@ -32,13 +32,13 @@ public class StudentController {
 //	}
 
 	// 출결 여부 조회 API
-	@GetMapping("/api/attendance")
-	public ResponseEntity<List<AttendanceDTO>> getIsAttendance() {
-		List<AttendanceDTO> res = stus.getIsAttendance();
-
-		return ResponseEntity.status(200).body(res);
-	}
-
+		@GetMapping("/api/attendance")
+		public ResponseEntity<List<AttendanceDTO>> getIsAttendance(){
+			List<AttendanceDTO> res = stus.getIsAttendance();
+			
+			return ResponseEntity.status(200).body(res);
+		}
+	
 	@GetMapping("/api/student")
 	public ResponseEntity<PageResponse<StudentDTO>> getStudent(
 			@RequestParam(name = "page", defaultValue = "1") int page,

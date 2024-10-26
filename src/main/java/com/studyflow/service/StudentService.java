@@ -21,6 +21,7 @@ import com.studyflow.entity.Attendance;
 import com.studyflow.entity.Homework;
 import com.studyflow.entity.Student;
 import com.studyflow.entity.Subject;
+import com.studyflow.entity.Attendance;
 import com.studyflow.repository.AttendanceRepository;
 import com.studyflow.repository.HomeworkRepository;
 import com.studyflow.repository.StudentRepository;
@@ -44,6 +45,47 @@ public class StudentService {
 		this.stur = stur;
 		this.homr = homr;
 		this.attr = attr;
+	}
+
+	// 출결 여부 조회 API
+	public List<AttendanceDTO> getIsAttendance() {
+		List<Attendance> attli = attr.findAll();
+		List<AttendanceDTO> attres = new ArrayList<>();
+		List<Student> stuli = stur.findAll();
+//			List<StudentDTO> stures = new ArrayList<>();
+
+//			for (Student s : stuli) {
+//				StudentDTO studto = new StudentDTO();
+//				studto.setStudentId(s.getStudentId());
+//				studto.setStudentName(s.getStudentName());
+//				
+//				stures.add(studto);
+//				
+//				for (Attendance a : attli) {
+//					AttendanceDTO attdto = new AttendanceDTO();
+//					attdto.setIsAttend(a.getIsAttend());
+//					
+//					attres.add(attdto);
+//				}
+//			}
+
+		for (Attendance a : attli) {
+			AttendanceDTO attdto = new AttendanceDTO();
+			attdto.setStudentId(a.getStudent().getStudentId());
+			attdto.setIsAttend(a.getIsAttend());
+
+			for (Student s : stuli) {
+				StudentDTO studto = new StudentDTO();
+//					studto.setStudentId(s.getStudentId());
+				studto.setStudentName(s.getStudentName());
+
+//					stures.add(studto);
+			}
+
+			attres.add(attdto);
+		}
+
+		return attres;
 	}
 
 	// id로 해당 학생 전체 숙제 목록
@@ -80,29 +122,6 @@ public class StudentService {
 			return studto;
 		}
 		return null; // Optional<>.isPresent()가 false 일때
-	}
-
-	// 출결 여부 조회 API
-	public List<AttendanceDTO> getIsAttendance() {
-		List<Attendance> attli = attr.findAll();
-		List<AttendanceDTO> attres = new ArrayList<>();
-		List<Student> stuli = stur.findAll();
-
-		for (Attendance a : attli) {
-			AttendanceDTO attdto = new AttendanceDTO();
-			attdto.setStudentId(a.getStudent().getStudentId());
-			attdto.setIsAttend(a.getIsAttend());
-
-			for (Student s : stuli) {
-				StudentDTO studto = new StudentDTO();
-				studto.setStudentName(s.getStudentName());
-
-				attdto.setStudent(studto);
-			}
-			attres.add(attdto);
-		}
-
-		return attres;
 	}
 
 	// 개선안
