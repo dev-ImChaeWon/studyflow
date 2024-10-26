@@ -13,7 +13,7 @@ public class Teacher {
 	@Id
 	private String userId;
 	private String userPassword;
-	private Character userRole;
+	private String userRole;
 	private String userName;
 	
 	@OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL)
@@ -27,11 +27,11 @@ public class Teacher {
 		this.subject = subject;
 	}
 
-	public Character getUserRole() {
+	public String getUserRole() {
 		return userRole;
 	}
 
-	public void setUserRole(Character userRole) {
+	public void setUserRole(String userRole) {
 		this.userRole = userRole;
 	}
 
