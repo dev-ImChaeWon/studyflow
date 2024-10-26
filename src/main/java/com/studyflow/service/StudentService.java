@@ -26,7 +26,7 @@ import com.studyflow.response.PageResponse;
 
 @Service
 public class StudentService {
-	
+
 //	private static final Logger logger = LoggerFactory.getLogger(StudentService.class);
 
 	TeacherRepository tear;
@@ -91,24 +91,27 @@ public class StudentService {
 //		}
 //		return res;
 //	}
-	
-	
-	public PageResponse<StudentDTO> getStudent(int page, int size, Date date, String teacherName, String isEnd,
+
+	public PageResponse<StudentDTO> getStudent(int page, int size, Date date, String teacherName, String homeworkStatus,
 			String studentName) {
-		String findByTeacherPattern = (teacherName != null && !teacherName.trim().isEmpty() && teacherName != "") ? "%" + teacherName.trim() + "%" : null;
-		String findByStudentPattern = (studentName != null && !studentName.trim().isEmpty() && studentName != "") ? "%" + studentName.trim() + "%" : null;
+		String findByTeacherPattern = (teacherName != null && !teacherName.trim().isEmpty() && teacherName != "")
+				? "%" + teacherName.trim() + "%"
+				: null;
+		String findByStudentPattern = (studentName != null && !studentName.trim().isEmpty() && studentName != "")
+				? "%" + studentName.trim() + "%"
+				: null;
 
 		// 로그 출력
 //		logger.info("Received teacherName: {}", teacherName);
 //	    logger.info("findByTeacherPattern: {}", findByTeacherPattern);
 //	    logger.info("Received studentName: {}", studentName);
 //	    logger.info("findByStudentPattern: {}", findByStudentPattern);
-		
+
 		Sort s = Sort.by(Sort.Order.asc("studentId"));
 		PageRequest pr = PageRequest.of(page - 1, size, s);
 
 		Page<Student> res = null;
-		
+
 		if (findByTeacherPattern == null) { // teacherName 이 없을 때
 			if (findByStudentPattern == null) {
 				// 선생님 이름 X, 학생 이름 X
@@ -153,6 +156,93 @@ public class StudentService {
 
 			studto.setHomework(hwList);
 			li.add(studto);
+		}
+
+		if (homeworkStatus.equals("complete")) {
+			List<StudentDTO> completeLi = new ArrayList<>();
+
+			for (StudentDTO studentDTO : li) {
+		        List<HomeworkDTO> completeHomework = new ArrayList<>();
+		        
+		        for (HomeworkDTO homework : studentDTO.getHomework()) {
+		            if (homework.getHomeworkPage() == homework.getCompletedPage()) {
+		                completeHomework.add(homework);
+		            }
+		        }
+
+		        // Homework 중에 완전히 완료된 항목이 있을 경우 해당 학생 추가
+		        if (!completeHomework.isEmpty()) {
+		            StudentDTO completedStudent = new StudentDTO();
+		            completedStudent.setStudentId(studentDTO.getStudentId());
+		            completedStudent.setStudentName(studentDTO.getStudentName());
+		            completedStudent.setHomework(completeHomework);
+		            completeLi.add(completedStudent);
+		        }
+		    }
+			
+			PageResponse<StudentDTO> studentPage = new PageResponse<>();
+			studentPage.setList(completeLi);
+			studentPage.setCurrentPage(page);
+			studentPage.setHasNext(page < res.getTotalPages());
+			studentPage.setHasPrevieous(page > 1);
+			studentPage.setTotalElements(res.getTotalElements());
+			studentPage.setTotalPages(res.getTotalPages());
+//			studentPage.setDate();
+
+			return studentPage;
+
+		} else if (homeworkStatus.equals("not-complete")) {
+			List<StudentDTO> notCompleteLi = new ArrayList<>();
+			
+			for (StudentDTO studentDTO : li) {
+		        List<HomeworkDTO> notCompleteHomework = new ArrayList<>();
+
+		        for (HomeworkDTO homework : studentDTO.getHomework()) {
+		            if (homework.getHomeworkPage() > homework.getCompletedPage()) {
+		                notCompleteHomework.add(homework);
+		            }
+		        }
+
+		        // 완료되지 않은 Homework가 있는 경우만 추가
+		        if (!notCompleteHomework.isEmpty()) {
+		            StudentDTO notCompletedStudent = new StudentDTO();
+		            notCompletedStudent.setStudentId(studentDTO.getStudentId());
+		            notCompletedStudent.setStudentName(studentDTO.getStudentName());
+		            notCompletedStudent.setHomework(notCompleteHomework);
+		            notCompleteLi.add(notCompletedStudent);
+		        }
+		    }
+
+		    PageResponse<StudentDTO> studentPage = new PageResponse<>();
+		    studentPage.setList(notCompleteLi);
+		    studentPage.setCurrentPage(page);
+		    studentPage.setHasNext(page < res.getTotalPages());
+		    studentPage.setHasPrevieous(page > 1);
+		    studentPage.setTotalElements(res.getTotalElements());
+		    studentPage.setTotalPages(res.getTotalPages());
+
+		    return studentPage;
+			
+		} else if (homeworkStatus.equals("no-homework")) {
+			List<StudentDTO> noHomeworkLi = new ArrayList<>();
+			
+			for (StudentDTO studentDTO : li) {
+		        List<HomeworkDTO> homeworkList = studentDTO.getHomework();
+		        if (homeworkList == null || homeworkList.isEmpty()) {
+		            noHomeworkLi.add(studentDTO);
+		        }
+		    }
+
+		    PageResponse<StudentDTO> studentPage = new PageResponse<>();
+		    studentPage.setList(noHomeworkLi);
+		    studentPage.setCurrentPage(page);
+		    studentPage.setHasNext(page < res.getTotalPages());
+		    studentPage.setHasPrevieous(page > 1);
+		    studentPage.setTotalElements(res.getTotalElements());
+		    studentPage.setTotalPages(res.getTotalPages());
+
+		    return studentPage;
+			
 		}
 
 		PageResponse<StudentDTO> studentPage = new PageResponse<>();

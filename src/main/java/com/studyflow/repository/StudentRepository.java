@@ -40,4 +40,5 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
         @Param("teacherName") String teacherName,
         @Param("studentNamePattern") String studentNamePattern,
         Pageable p);
+    
 }

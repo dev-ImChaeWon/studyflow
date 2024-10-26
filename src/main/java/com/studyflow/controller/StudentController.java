@@ -36,10 +36,10 @@ public class StudentController {
 			@RequestParam(name = "size", defaultValue = "10") int size,
 			@RequestParam(name = "date", defaultValue = "2023-10-01") Date date,
 			@RequestParam(name = "teacherName", required = false) String teacherName,
-			@RequestParam(name = "isEnd", required = false) String isEnd,
+			@RequestParam(name = "homeworkStatus", required = false) String homeworkStatus,
 			@RequestParam(name = "studentName", required = false) String studentName) {
 
-		return ResponseEntity.status(200).body(stus.getStudent(page, size, date, teacherName, isEnd, studentName));
+		return ResponseEntity.status(200).body(stus.getStudent(page, size, date, teacherName, homeworkStatus, studentName));
 
 	}
 
