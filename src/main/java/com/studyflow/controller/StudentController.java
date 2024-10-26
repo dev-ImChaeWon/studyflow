@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.studyflow.dto.AttendanceDTO;
 import com.studyflow.dto.StudentDTO;
 import com.studyflow.response.PageResponse;
 import com.studyflow.service.StudentService;
@@ -29,7 +30,15 @@ public class StudentController {
 //		
 //		return ResponseEntity.status(200).body(res);
 //	}
-	
+
+	// 출결 여부 조회 API
+	@GetMapping("/api/attendance")
+	public ResponseEntity<List<AttendanceDTO>> getIsAttendance() {
+		List<AttendanceDTO> res = stus.getIsAttendance();
+
+		return ResponseEntity.status(200).body(res);
+	}
+
 	@GetMapping("/api/student")
 	public ResponseEntity<PageResponse<StudentDTO>> getStudent(
 			@RequestParam(name = "page", defaultValue = "1") int page,
@@ -39,7 +48,8 @@ public class StudentController {
 			@RequestParam(name = "homeworkStatus", required = false) String homeworkStatus,
 			@RequestParam(name = "studentName", required = false) String studentName) {
 
-		return ResponseEntity.status(200).body(stus.getStudent(page, size, date, teacherName, homeworkStatus, studentName));
+		return ResponseEntity.status(200)
+				.body(stus.getStudent(page, size, date, teacherName, homeworkStatus, studentName));
 
 	}
 
