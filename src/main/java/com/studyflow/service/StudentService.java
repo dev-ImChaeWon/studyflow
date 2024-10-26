@@ -158,7 +158,7 @@ public class StudentService {
 			li.add(studto);
 		}
 
-		if (homeworkStatus.equals("complete")) {
+		if (homeworkStatus != null && homeworkStatus.equals("complete")) {
 			List<StudentDTO> completeLi = new ArrayList<>();
 
 			for (StudentDTO studentDTO : li) {
@@ -191,7 +191,7 @@ public class StudentService {
 
 			return studentPage;
 
-		} else if (homeworkStatus.equals("not-complete")) {
+		} else if (homeworkStatus != null && homeworkStatus.equals("not-complete")) {
 			List<StudentDTO> notCompleteLi = new ArrayList<>();
 			
 			for (StudentDTO studentDTO : li) {
@@ -223,7 +223,7 @@ public class StudentService {
 
 		    return studentPage;
 			
-		} else if (homeworkStatus.equals("no-homework")) {
+		} else if (homeworkStatus!= null && homeworkStatus.equals("no-homework")) {
 			List<StudentDTO> noHomeworkLi = new ArrayList<>();
 			
 			for (StudentDTO studentDTO : li) {
