@@ -14,11 +14,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.studyflow.dto.AttendanceDTO;
 import com.studyflow.dto.HomeworkDTO;
 import com.studyflow.dto.StudentDTO;
 import com.studyflow.entity.Homework;
 import com.studyflow.entity.Student;
 import com.studyflow.entity.Subject;
+import com.studyflow.entity.Attendance;
+import com.studyflow.repository.AttendanceRepository;
 import com.studyflow.repository.HomeworkRepository;
 import com.studyflow.repository.StudentRepository;
 import com.studyflow.repository.TeacherRepository;
@@ -32,12 +35,55 @@ public class StudentService {
 	TeacherRepository tear;
 	StudentRepository stur;
 	HomeworkRepository homr;
+	AttendanceRepository attr;
 
 	@Autowired
-	public StudentService(TeacherRepository tear, StudentRepository stur, HomeworkRepository homr) {
+	public StudentService(TeacherRepository tear, StudentRepository stur, HomeworkRepository homr, AttendanceRepository attr) {
 		this.tear = tear;
 		this.stur = stur;
 		this.homr = homr;
+		this.attr = attr;
+	}
+	
+	// 출결 여부 조회 API
+	public List<AttendanceDTO> getIsAttendance() {
+		List<Attendance> attli = attr.findAll();
+		List<AttendanceDTO> attres = new ArrayList<>();
+		List<Student> stuli = stur.findAll();
+//			List<StudentDTO> stures = new ArrayList<>();
+	
+//			for (Student s : stuli) {
+//				StudentDTO studto = new StudentDTO();
+//				studto.setStudentId(s.getStudentId());
+//				studto.setStudentName(s.getStudentName());
+//				
+//				stures.add(studto);
+//				
+//				for (Attendance a : attli) {
+//					AttendanceDTO attdto = new AttendanceDTO();
+//					attdto.setIsAttend(a.getIsAttend());
+//					
+//					attres.add(attdto);
+//				}
+//			}
+		
+		for(Attendance a : attli) {
+			AttendanceDTO attdto = new AttendanceDTO();
+			attdto.setStudentId(a.getStudent().getStudentId());
+			attdto.setIsAttend(a.getIsAttend());
+			
+			for(Student s : stuli) {
+				StudentDTO studto = new StudentDTO();
+//					studto.setStudentId(s.getStudentId());
+				studto.setStudentName(s.getStudentName());
+				
+//					stures.add(studto);
+			}
+			
+			attres.add(attdto);
+		}
+		
+		return attres;
 	}
 
 	// id로 해당 학생 전체 숙제 목록
