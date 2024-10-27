@@ -35,8 +35,8 @@ public class StudentController {
 
 	// 출결 여부 조회 API
 		@GetMapping("/api/attendance")
-		public ResponseEntity<List<AttendanceDTO>> getIsAttendance(){
-			List<AttendanceDTO> res = stus.getIsAttendance();
+		public ResponseEntity<List<AttendanceDTO>> getAttendanceByDate(@RequestParam(name = "date", required = false) LocalDate date){
+			List<AttendanceDTO> res = stus.getAttendanceByDate();
 			
 			return ResponseEntity.status(200).body(res);
 		}
