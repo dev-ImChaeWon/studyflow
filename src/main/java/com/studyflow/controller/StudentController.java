@@ -1,6 +1,7 @@
 package com.studyflow.controller;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -44,13 +45,14 @@ public class StudentController {
 	public ResponseEntity<PageResponse<StudentDTO>> getStudent(
 			@RequestParam(name = "page", defaultValue = "1") int page,
 			@RequestParam(name = "size", defaultValue = "10") int size,
-			@RequestParam(name = "date", defaultValue = "2023-10-01") Date date,
-			@RequestParam(name = "teacherName", required = false) String teacherName,
+			@RequestParam(name = "date", defaultValue = "2023-10-01") LocalDate date,
+			@RequestParam(name = "teacherName", required = false) String teacherId,
 			@RequestParam(name = "homeworkStatus", required = false) String homeworkStatus,
 			@RequestParam(name = "studentName", required = false) String studentName) {
 
+		stus.getStudent2(page, size, date, teacherId, homeworkStatus, studentName);
 		return ResponseEntity.status(200)
-				.body(stus.getStudent(page, size, date, teacherName, homeworkStatus, studentName));
+				.body(null);
 
 	}
 

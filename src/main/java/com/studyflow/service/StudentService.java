@@ -4,7 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -120,10 +122,27 @@ public class StudentService {
 	}
 
 	// 개선안
-	public void getStudent2(int page, int size, Date date, String teacherName, String homeworkStatus,
+	public void getStudent2(int page, int size, LocalDate date, String teacherId, String homeworkStatus,
 			String studentName) {
 		// 페이지 --> 학생을 조회하면 homework는 딸려온다
 		// 학생조회할때 특정 날짜로, 완료여부 학생 조회하는 api
+		Sort s = Sort.by(Sort.Order.asc("studentId"));
+		PageRequest pr = PageRequest.of(page - 1, size, s);
+		String studentNamePattern = null;
+		if(studentName == null) {
+			studentNamePattern = "%%";
+		}else {
+			studentNamePattern = "%" + studentName + "%";
+		}
+		
+		
+		Page<Student> res = stur.findCompletedStudentWithTeacher(teacherId, LocalDateTime.of(date, LocalTime.of(0, 0)), LocalDateTime.of(date.plusDays(1),  LocalTime.of(0, 0)), studentNamePattern, pr);
+		System.out.println("=========조회 결과=========");
+		System.out.println(res.getTotalElements());
+		System.out.println(res.getTotalPages());
+		for(Student tmp : res.getContent()) {
+			System.out.println(tmp.getStudentId() + tmp.getStudentName());
+		}
 
 	}
 

@@ -1,5 +1,6 @@
 package com.studyflow.repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
@@ -40,5 +41,35 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
 			+ "WHERE t.userName LIKE :teacherName " + "AND s.studentName LIKE :studentNamePattern")
 	public Page<Student> findAllStudentByTeacherAndStudent(@Param("teacherName") String teacherName,
 			@Param("studentNamePattern") String studentNamePattern, Pageable p);
+	
+	
+	@Query("SELECT s "
+		     + "FROM Student s "
+		     + "JOIN StudentSubject ss ON s.studentId = ss.student.studentId "
+		     + "JOIN Subject sub ON ss.subject.subjectId = sub.subjectId "
+		     + "WHERE sub.teacher.id = :teacherId "
+		     + "AND s.studentId IN ( "
+		     + "    SELECT h.student.studentId "
+		     + "    FROM Homework h "
+		     + "    WHERE h.homeworkDatetime >= :startDate "
+		     + "    AND h.homeworkDatetime < :endDate "
+		     + "    GROUP BY h.student.studentId "
+		     + "    HAVING SUM(h.homeworkPage) = SUM(h.completedPage) "
+		     + ") "
+		     + "AND s.studentName LIKE :studentName")
+	public Page<Student> findCompletedStudentWithTeacher(@Param("teacherId") String teacherId,
+			@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+			@Param("studentName") String studentName, Pageable p);
+	
 
 }
+
+
+
+
+
+
+
+
+
+
