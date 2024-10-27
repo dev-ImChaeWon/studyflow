@@ -122,28 +122,101 @@ public class StudentService {
 	}
 
 	// 개선안
-	public void getStudent2(int page, int size, LocalDate date, String teacherId, String homeworkStatus,
-			String studentName) {
+	public PageResponse<StudentDTO> getStudent2(int page, int size, LocalDate date, String teacherId,
+			String homeworkStatus, String studentName) {
 		// 페이지 --> 학생을 조회하면 homework는 딸려온다
 		// 학생조회할때 특정 날짜로, 완료여부 학생 조회하는 api
 		Sort s = Sort.by(Sort.Order.asc("studentId"));
 		PageRequest pr = PageRequest.of(page - 1, size, s);
 		String studentNamePattern = null;
-		if(studentName == null) {
+		Page<Student> res = null;
+		if (date == null) {
+			date = LocalDate.now();
+		}
+
+		if (studentName == null) {
 			studentNamePattern = "%%";
-		}else {
+		} else {
 			studentNamePattern = "%" + studentName + "%";
 		}
-		
-		
-		Page<Student> res = stur.findCompletedStudentWithTeacher(teacherId, LocalDateTime.of(date, LocalTime.of(0, 0)), LocalDateTime.of(date.plusDays(1),  LocalTime.of(0, 0)), studentNamePattern, pr);
+
+		if (teacherId == null) {
+			if (homeworkStatus.equals(null)) {
+				// teacherId X, 모든 parameter가 null
+				res = stur.findAllStudentWithoutTeacher(LocalDateTime.of(date, LocalTime.of(0, 0)),
+						LocalDateTime.of(date.plusDays(1), LocalTime.of(0, 0)), studentNamePattern, pr);
+			} else if (homeworkStatus.equals("not-complete")) {
+				// teacherId X, 숙제 안 끝남
+				res = stur.findNotCompletedStudentWithoutTeacher(LocalDateTime.of(date, LocalTime.of(0, 0)),
+						LocalDateTime.of(date.plusDays(1), LocalTime.of(0, 0)), studentNamePattern, pr);
+			} else if (homeworkStatus.equals("no-homework")) {
+				// teacherId X, 숙제 없음
+				res = stur.findNoHomeworkStudentWithoutTeacher(LocalDateTime.of(date, LocalTime.of(0, 0)),
+						LocalDateTime.of(date.plusDays(1), LocalTime.of(0, 0)), studentNamePattern, pr);
+			} else if (homeworkStatus.equals("complete")){
+				// teacherId X, 숙제 끝남
+				res = stur.findCompletedStudentWithoutTeacher(LocalDateTime.of(date, LocalTime.of(0, 0)),
+						LocalDateTime.of(date.plusDays(1), LocalTime.of(0, 0)), studentNamePattern, pr);
+			}
+		} else {
+			if (homeworkStatus.equals(null)) {
+				// teacherId O, 나머지 모든 parameter가 null
+				res = stur.findAllStudentWithTeacher(teacherId, LocalDateTime.of(date, LocalTime.of(0, 0)),
+						LocalDateTime.of(date.plusDays(1), LocalTime.of(0, 0)), studentNamePattern, pr);
+			} else if (homeworkStatus.equals("not-complete")) {
+				// teacherId O, 숙제 안 끝남
+				res = stur.findNotCompletedStudentWithTeacher(teacherId, LocalDateTime.of(date, LocalTime.of(0, 0)),
+						LocalDateTime.of(date.plusDays(1), LocalTime.of(0, 0)), studentNamePattern, pr);
+			} else if (homeworkStatus.equals("no-homework")) {
+				// teacherId O, 숙제 없음
+				res = stur.findNoHomeworkStudentWithTeacher(teacherId, LocalDateTime.of(date, LocalTime.of(0, 0)),
+						LocalDateTime.of(date.plusDays(1), LocalTime.of(0, 0)), studentNamePattern, pr);
+			} else if (homeworkStatus.equals("complete")){
+				// teacherId O, 숙제 끝남
+				res = stur.findCompletedStudentWithTeacher(teacherId, LocalDateTime.of(date, LocalTime.of(0, 0)),
+						LocalDateTime.of(date.plusDays(1), LocalTime.of(0, 0)), studentNamePattern, pr);
+			}
+		}
+
 		System.out.println("=========조회 결과=========");
 		System.out.println(res.getTotalElements());
 		System.out.println(res.getTotalPages());
-		for(Student tmp : res.getContent()) {
+		for (Student tmp : res.getContent()) {
 			System.out.println(tmp.getStudentId() + tmp.getStudentName());
 		}
 
+		List<StudentDTO> li = new ArrayList<>();
+		for (Student stu : res.getContent()) {
+			StudentDTO studto = new StudentDTO();
+			studto.setStudentId(stu.getStudentId());
+			studto.setStudentName(stu.getStudentName());
+
+			List<HomeworkDTO> hwList = new ArrayList<>();
+			for (Homework hw : stu.getHomework()) {
+				HomeworkDTO hwdto = new HomeworkDTO();
+				hwdto.setHomeworkId(hw.getHomeworkId());
+				Subject subject = new Subject();
+				subject.setSubjectName(hw.getSubject().getSubjectName());
+				hwdto.setSubject(subject);
+				hwdto.setHomeworkPage(hw.getHomeworkPage());
+				hwdto.setCompletedPage(hw.getCompletedPage());
+				hwdto.setComment(hw.getComment());
+				hwList.add(hwdto);
+			}
+
+			studto.setHomework(hwList);
+			li.add(studto);
+		}
+
+		PageResponse<StudentDTO> studentPage = new PageResponse<>();
+		studentPage.setList(li);
+		studentPage.setCurrentPage(page);
+		studentPage.setHasNext(page < res.getTotalPages());
+		studentPage.setHasPrevieous(page > 1);
+		studentPage.setTotalElements(res.getTotalElements());
+		studentPage.setTotalPages(res.getTotalPages());
+
+		return studentPage;
 	}
 
 	public PageResponse<StudentDTO> getStudent(int page, int size, Date date, String teacherName, String homeworkStatus,
@@ -296,8 +369,6 @@ public class StudentService {
 			studentPage.setHasPrevieous(page > 1);
 			studentPage.setTotalElements(res.getTotalElements());
 			studentPage.setTotalPages(res.getTotalPages());
-			
-			
 
 			return studentPage;
 

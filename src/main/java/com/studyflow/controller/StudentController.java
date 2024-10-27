@@ -42,17 +42,17 @@ public class StudentController {
 		}
 	
 	@GetMapping("/api/student")
-	public ResponseEntity<PageResponse<StudentDTO>> getStudent(
+	public ResponseEntity<PageResponse<StudentDTO>> getStudent2(
 			@RequestParam(name = "page", defaultValue = "1") int page,
 			@RequestParam(name = "size", defaultValue = "10") int size,
-			@RequestParam(name = "date", defaultValue = "2023-10-01") LocalDate date,
-			@RequestParam(name = "teacherName", required = false) String teacherId,
+			@RequestParam(name = "date", required = true) LocalDate date,
+			@RequestParam(name = "teacherId", required = false) String teacherId,
 			@RequestParam(name = "homeworkStatus", required = false) String homeworkStatus,
 			@RequestParam(name = "studentName", required = false) String studentName) {
 
-		stus.getStudent2(page, size, date, teacherId, homeworkStatus, studentName);
-		return ResponseEntity.status(200)
-				.body(null);
+		PageResponse<StudentDTO> res = stus.getStudent2(page, size, date, teacherId, homeworkStatus, studentName);
+//		stus.getStudent2(page, size, date, teacherId, homeworkStatus, studentName);
+		return ResponseEntity.status(200).body(res);
 
 	}
 

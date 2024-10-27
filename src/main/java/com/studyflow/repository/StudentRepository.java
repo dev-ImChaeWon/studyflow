@@ -47,6 +47,77 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
 		     + "FROM Student s "
 		     + "JOIN StudentSubject ss ON s.studentId = ss.student.studentId "
 		     + "JOIN Subject sub ON ss.subject.subjectId = sub.subjectId "
+		     + "AND s.studentId IN ( "
+		     + "    SELECT h.student.studentId "
+		     + "    FROM Homework h "
+		     + "    WHERE h.homeworkDatetime >= :startDate "
+		     + "    AND h.homeworkDatetime < :endDate "
+		     + "    GROUP BY h.student.studentId "
+		     + "    HAVING SUM(h.homeworkPage) = SUM(h.completedPage) "
+		     + ") "
+		     + "AND s.studentName LIKE :studentName")
+	public Page<Student> findCompletedStudentWithoutTeacher(
+			@Param("startDate") LocalDateTime startDate, 
+			@Param("endDate") LocalDateTime endDate,
+			@Param("studentName") String studentName, Pageable p);
+	
+	@Query("SELECT s "
+		     + "FROM Student s "
+		     + "JOIN StudentSubject ss ON s.studentId = ss.student.studentId "
+		     + "JOIN Subject sub ON ss.subject.subjectId = sub.subjectId "
+		     + "AND s.studentId IN ( "
+		     + "    SELECT h.student.studentId "
+		     + "    FROM Homework h "
+		     + "    WHERE h.homeworkDatetime >= :startDate "
+		     + "    AND h.homeworkDatetime < :endDate "
+		     + "    GROUP BY h.student.studentId "
+		     + "    HAVING SUM(h.homeworkPage) != SUM(h.completedPage) "
+		     + ") "
+		     + "AND s.studentName LIKE :studentName")
+	public Page<Student> findNotCompletedStudentWithoutTeacher(
+			@Param("startDate") LocalDateTime startDate, 
+			@Param("endDate") LocalDateTime endDate,
+			@Param("studentName") String studentName, Pageable p);
+	
+	@Query("SELECT s "
+			+ "FROM Student s "
+			+ "JOIN StudentSubject ss ON s.studentId = ss.student.studentId "
+			+ "JOIN Subject sub ON ss.subject.subjectId = sub.subjectId "
+			+ "AND s.studentId IN ( "
+		    + "    SELECT h.student.studentId "
+		    + "    FROM Homework h "
+		    + "    WHERE h.homeworkDatetime >= :startDate "
+		    + "    AND h.homeworkDatetime < :endDate "
+		    + "    GROUP BY h.student.studentId "
+		    + "    HAVING h.homeworkPage is null"
+		    + ") "
+			+ "AND s.studentName LIKE :studentName")
+	public Page<Student> findNoHomeworkStudentWithoutTeacher(
+			@Param("startDate") LocalDateTime startDate, 
+			@Param("endDate") LocalDateTime endDate,
+			@Param("studentName") String studentName, Pageable p);
+	
+	@Query("SELECT s "
+			+ "FROM Student s "
+			+ "JOIN StudentSubject ss ON s.studentId = ss.student.studentId "
+			+ "JOIN Subject sub ON ss.subject.subjectId = sub.subjectId "
+			+ "AND s.studentId IN ( "
+			+ "    SELECT h.student.studentId "
+			+ "    FROM Homework h "
+			+ "    WHERE h.homeworkDatetime >= :startDate "
+			+ "    AND h.homeworkDatetime < :endDate "
+			+ "    GROUP BY h.student.studentId "
+			+ ") "
+			+ "AND s.studentName LIKE :studentName")
+	public Page<Student> findAllStudentWithoutTeacher(
+			@Param("startDate") LocalDateTime startDate, 
+			@Param("endDate") LocalDateTime endDate,
+			@Param("studentName") String studentName, Pageable p);
+	
+	@Query("SELECT s "
+		     + "FROM Student s "
+		     + "JOIN StudentSubject ss ON s.studentId = ss.student.studentId "
+		     + "JOIN Subject sub ON ss.subject.subjectId = sub.subjectId "
 		     + "WHERE sub.teacher.id = :teacherId "
 		     + "AND s.studentId IN ( "
 		     + "    SELECT h.student.studentId "
@@ -57,11 +128,70 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
 		     + "    HAVING SUM(h.homeworkPage) = SUM(h.completedPage) "
 		     + ") "
 		     + "AND s.studentName LIKE :studentName")
-	public Page<Student> findCompletedStudentWithTeacher(@Param("teacherId") String teacherId,
-			@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+	public Page<Student> findCompletedStudentWithTeacher(
+			@Param("teacherId") String teacherId,
+			@Param("startDate") LocalDateTime startDate, 
+			@Param("endDate") LocalDateTime endDate,
 			@Param("studentName") String studentName, Pageable p);
 	
-
+	@Query("SELECT s "
+		     + "FROM Student s "
+		     + "JOIN StudentSubject ss ON s.studentId = ss.student.studentId "
+		     + "JOIN Subject sub ON ss.subject.subjectId = sub.subjectId "
+		     + "WHERE sub.teacher.id = :teacherId "
+		     + "AND s.studentId IN ( "
+		     + "    SELECT h.student.studentId "
+		     + "    FROM Homework h "
+		     + "    WHERE h.homeworkDatetime >= :startDate "
+		     + "    AND h.homeworkDatetime < :endDate "
+		     + "    GROUP BY h.student.studentId "
+		     + "    HAVING SUM(h.homeworkPage) != SUM(h.completedPage) "
+		     + ") "
+		     + "AND s.studentName LIKE :studentName")
+	public Page<Student> findNotCompletedStudentWithTeacher(
+			@Param("teacherId") String teacherId,
+			@Param("startDate") LocalDateTime startDate, 
+			@Param("endDate") LocalDateTime endDate,
+			@Param("studentName") String studentName, Pageable p);
+	
+	@Query("SELECT s "
+		     + "FROM Student s "
+		     + "JOIN StudentSubject ss ON s.studentId = ss.student.studentId "
+		     + "JOIN Subject sub ON ss.subject.subjectId = sub.subjectId "
+		     + "WHERE sub.teacher.id = :teacherId "
+		     + "AND s.studentId IN ( "
+		     + "    SELECT h.student.studentId "
+		     + "    FROM Homework h "
+		     + "    WHERE h.homeworkDatetime >= :startDate "
+		     + "    AND h.homeworkDatetime < :endDate "
+		     + "    GROUP BY h.student.studentId "
+		     + "    HAVING h.homeworkPage is null"
+		     + ") "
+		     + "AND s.studentName LIKE :studentName")
+	public Page<Student> findNoHomeworkStudentWithTeacher(
+			@Param("teacherId") String teacherId,
+			@Param("startDate") LocalDateTime startDate, 
+			@Param("endDate") LocalDateTime endDate,
+			@Param("studentName") String studentName, Pageable p);
+	
+	@Query("SELECT s "
+		     + "FROM Student s "
+		     + "JOIN StudentSubject ss ON s.studentId = ss.student.studentId "
+		     + "JOIN Subject sub ON ss.subject.subjectId = sub.subjectId "
+		     + "WHERE sub.teacher.id = :teacherId "
+		     + "AND s.studentId IN ( "
+		     + "    SELECT h.student.studentId "
+		     + "    FROM Homework h "
+		     + "    WHERE h.homeworkDatetime >= :startDate "
+		     + "    AND h.homeworkDatetime < :endDate "
+		     + "    GROUP BY h.student.studentId "
+		     + ") "
+		     + "AND s.studentName LIKE :studentName")
+	public Page<Student> findAllStudentWithTeacher(
+			@Param("teacherId") String teacherId,
+			@Param("startDate") LocalDateTime startDate, 
+			@Param("endDate") LocalDateTime endDate,
+			@Param("studentName") String studentName, Pageable p);
 }
 
 
