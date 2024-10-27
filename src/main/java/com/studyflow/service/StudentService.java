@@ -51,39 +51,60 @@ public class StudentService {
 	}
 
 	// 출결 여부 조회 API
-	public List<AttendanceDTO> getIsAttendance() {
-		List<Attendance> attli = attr.findAll();
-		List<AttendanceDTO> attres = new ArrayList<>();
-//		List<StudentDTO> stures = new ArrayList<>();
+	public List<AttendanceDTO> getAttendanceByDate() {
+        List<Attendance> attli = attr.findByAttendanceDate();
+        List<AttendanceDTO> attres = new ArrayList<>();
 
-//			for (Student s : stuli) {
-//				StudentDTO studto = new StudentDTO();
-//				studto.setStudentId(s.getStudentId());
-//				studto.setStudentName(s.getStudentName());
-//				
-//				stures.add(studto);
-//				
-//				for (Attendance a : attli) {
-//					AttendanceDTO attdto = new AttendanceDTO();
-//					attdto.setIsAttend(a.getIsAttend());
-//					
-//					attres.add(attdto);
-//				}
-//			}
+        for (Attendance attendance : attli) {
+            AttendanceDTO attdto = new AttendanceDTO();
+            attdto.setStudentId(attendance.getStudent().getStudentId());
+            attdto.setIsAttend(attendance.getIsAttend());
 
-		for (Attendance a : attli) {
-			AttendanceDTO attdto = new AttendanceDTO();
-			attdto.setStudentId(a.getStudent().getStudentId());
-			attdto.setIsAttend(a.getIsAttend());
+            StudentDTO studto = new StudentDTO();
+            studto.setStudentName(attendance.getStudent().getStudentName());
+            attdto.setStudent(studto);
 
-			StudentDTO studto = new StudentDTO();
-			studto.setStudentName(a.getStudent().getStudentName());
+            attres.add(attdto);
+        }
 
-			attdto.setStudent(studto);
-			attres.add(attdto);
-		}
-		return attres;
-	}
+        return attres;
+    }
+	
+//	public List<AttendanceDTO> getIsAttendance() {
+//		List<Attendance> attli = attr.findAll();
+//		List<AttendanceDTO> attres = new ArrayList<>();
+////		List<StudentDTO> stures = new ArrayList<>();
+//
+////			for (Student s : stuli) {
+////				StudentDTO studto = new StudentDTO();
+////				studto.setStudentId(s.getStudentId());
+////				studto.setStudentName(s.getStudentName());
+////				
+////				stures.add(studto);
+////				
+////				for (Attendance a : attli) {
+////					AttendanceDTO attdto = new AttendanceDTO();
+////					attdto.setIsAttend(a.getIsAttend());
+////					
+////					attres.add(attdto);
+////				}
+////			}
+//
+//		for (Attendance a : attli) {
+//			AttendanceDTO attdto = new AttendanceDTO();
+//			attdto.setStudentId(a.getStudent().getStudentId());
+//			attdto.setIsAttend(a.getIsAttend());
+//
+//			StudentDTO studto = new StudentDTO();
+//			studto.setStudentName(a.getStudent().getStudentName());
+//
+//			attdto.setStudent(studto);
+//			attres.add(attdto);
+//		}
+//		return attres;
+//	}
+	
+	
 
 	// id로 해당 학생 전체 숙제 목록
 	public StudentDTO getHomeworkById(int id) {
