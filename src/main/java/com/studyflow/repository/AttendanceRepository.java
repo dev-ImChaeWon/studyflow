@@ -4,13 +4,16 @@ import java.sql.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.studyflow.entity.Attendance;
 import com.studyflow.entity.AttendanceId;
 
-public interface AttendanceRepository extends JpaRepository<Attendance, AttendanceId>{
+public interface AttendanceRepository extends JpaRepository<Attendance, AttendanceId> {
 
 	public List<Attendance> findAll();
 
-	public List<Attendance> findByAttendanceDate();
+	@Query("SELECT a FROM Attendance a WHERE a.id.attendanceDate = :attendanceDate")
+	List<Attendance> findByAttendanceDate(@Param("attendanceDate") Date attendanceDate);
 }

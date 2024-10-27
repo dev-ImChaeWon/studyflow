@@ -33,14 +33,15 @@ public class StudentController {
 //		return ResponseEntity.status(200).body(res);
 //	}
 
-	// 출결 여부 조회 API
-		@GetMapping("/api/attendance")
-		public ResponseEntity<List<AttendanceDTO>> getAttendanceByDate(@RequestParam(name = "date", required = false) LocalDate date){
-			List<AttendanceDTO> res = stus.getAttendanceByDate();
-			
-			return ResponseEntity.status(200).body(res);
-		}
-	
+	// 날짜별 출결 여부 조회 API
+	@GetMapping("/api/attendance")
+	public ResponseEntity<List<AttendanceDTO>> getAttendanceByDate(
+			@RequestParam(name = "date", required = true) Date date) {
+		List<AttendanceDTO> res = stus.getAttendanceByDate(date);
+
+		return ResponseEntity.status(200).body(res);
+	}
+
 	@GetMapping("/api/student")
 	public ResponseEntity<PageResponse<StudentDTO>> getStudent2(
 			@RequestParam(name = "page", defaultValue = "1") int page,

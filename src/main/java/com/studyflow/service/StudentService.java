@@ -50,26 +50,45 @@ public class StudentService {
 		this.attr = attr;
 	}
 
-	// 출결 여부 조회 API
-	public List<AttendanceDTO> getAttendanceByDate() {
-        List<Attendance> attli = attr.findByAttendanceDate();
-        List<AttendanceDTO> attres = new ArrayList<>();
+	// 날짜별 출결 여부 조회 API
+	public List<AttendanceDTO> getAttendanceByDate(Date AttendanceDate) {
+		List<Attendance> all = attr.findAll();
+		List<Attendance> attli = attr.findByAttendanceDate(AttendanceDate);
+		List<AttendanceDTO> attres = new ArrayList<>();
 
-        for (Attendance attendance : attli) {
-            AttendanceDTO attdto = new AttendanceDTO();
-            attdto.setStudentId(attendance.getStudent().getStudentId());
-            attdto.setIsAttend(attendance.getIsAttend());
+		for (Attendance a : attli) {
+			AttendanceDTO attdto = new AttendanceDTO();
+			attdto.setStudentId(a.getStudent().getStudentId());
+			attdto.setIsAttend(a.getIsAttend());
+			attdto.setAttendanceDate(a.getAttendanceDate());
 
-            StudentDTO studto = new StudentDTO();
-            studto.setStudentName(attendance.getStudent().getStudentName());
-            attdto.setStudent(studto);
+			StudentDTO studto = new StudentDTO();
+			studto.setStudentName(a.getStudent().getStudentName());
+			attdto.setStudent(studto);
 
-            attres.add(attdto);
-        }
+			attres.add(attdto);
 
-        return attres;
-    }
-	
+		}
+
+		if (AttendanceDate != null) {
+			for (Attendance a : all) {
+				if (AttendanceDate.compareTo(a.getId().getAttendanceDate()) != 0) {
+					AttendanceDTO attdto = new AttendanceDTO();
+					attdto.setStudentId(a.getStudent().getStudentId());
+
+					StudentDTO studto = new StudentDTO();
+					studto.setStudentName(a.getStudent().getStudentName());
+					attdto.setStudent(studto);
+
+					attres.add(attdto);
+
+				}
+			}
+		}
+
+		return attres;
+	}
+
 //	public List<AttendanceDTO> getIsAttendance() {
 //		List<Attendance> attli = attr.findAll();
 //		List<AttendanceDTO> attres = new ArrayList<>();
@@ -103,8 +122,6 @@ public class StudentService {
 //		}
 //		return attres;
 //	}
-	
-	
 
 	// id로 해당 학생 전체 숙제 목록
 	public StudentDTO getHomeworkById(int id) {
@@ -174,7 +191,7 @@ public class StudentService {
 				// teacherId X, 숙제 없음
 				res = stur.findNoHomeworkStudentWithoutTeacher(LocalDateTime.of(date, LocalTime.of(0, 0)),
 						LocalDateTime.of(date.plusDays(1), LocalTime.of(0, 0)), studentNamePattern, pr);
-			} else if (homeworkStatus.equals("complete")){
+			} else if (homeworkStatus.equals("complete")) {
 				// teacherId X, 숙제 끝남
 				res = stur.findCompletedStudentWithoutTeacher(LocalDateTime.of(date, LocalTime.of(0, 0)),
 						LocalDateTime.of(date.plusDays(1), LocalTime.of(0, 0)), studentNamePattern, pr);
@@ -192,7 +209,7 @@ public class StudentService {
 				// teacherId O, 숙제 없음
 				res = stur.findNoHomeworkStudentWithTeacher(teacherId, LocalDateTime.of(date, LocalTime.of(0, 0)),
 						LocalDateTime.of(date.plusDays(1), LocalTime.of(0, 0)), studentNamePattern, pr);
-			} else if (homeworkStatus.equals("complete")){
+			} else if (homeworkStatus.equals("complete")) {
 				// teacherId O, 숙제 끝남
 				res = stur.findCompletedStudentWithTeacher(teacherId, LocalDateTime.of(date, LocalTime.of(0, 0)),
 						LocalDateTime.of(date.plusDays(1), LocalTime.of(0, 0)), studentNamePattern, pr);
