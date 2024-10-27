@@ -46,4 +46,12 @@ public class Attendance {
 		this.student = student;
 	}
 
+	public Integer getStudentId() {
+		return id.getStudentId();
+	}
+
+	public Date getAttendanceDate() {
+		return id.getAttendanceDate();
+	}
+
 }
