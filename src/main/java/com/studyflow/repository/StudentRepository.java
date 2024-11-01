@@ -80,18 +80,15 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
 			@Param("studentName") String studentName, Pageable p);
 	
 	@Query("SELECT s "
-			+ "FROM Student s "
-			+ "JOIN StudentSubject ss ON s.studentId = ss.student.studentId "
-			+ "JOIN Subject sub ON ss.subject.subjectId = sub.subjectId "
-			+ "AND s.studentId IN ( "
-		    + "    SELECT h.student.studentId "
-		    + "    FROM Homework h "
-		    + "    WHERE h.homeworkDatetime >= :startDate "
-		    + "    AND h.homeworkDatetime < :endDate "
-		    + "    GROUP BY h.student.studentId "
-		    + "    HAVING h.homeworkPage is null"
-		    + ") "
-			+ "AND s.studentName LIKE :studentName")
+		     + "FROM Student s "
+//			 + "JOIN Homework h ON s.studentId = h.student.studentId "
+		     + "WHERE NOT EXISTS ("
+		     + "SELECT h "
+		     + "FROM Homework h "
+		     + "WHERE h.student.id = s.id "
+		     + "AND h.homeworkDatetime >= :startDate "
+		     + "AND h.homeworkDatetime < :endDate) "
+		     + "AND s.studentName LIKE :studentName")
 	public Page<Student> findNoHomeworkStudentWithoutTeacher(
 			@Param("startDate") LocalDateTime startDate, 
 			@Param("endDate") LocalDateTime endDate,
@@ -155,19 +152,17 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
 			@Param("studentName") String studentName, Pageable p);
 	
 	@Query("SELECT s "
-		     + "FROM Student s "
-		     + "JOIN StudentSubject ss ON s.studentId = ss.student.studentId "
-		     + "JOIN Subject sub ON ss.subject.subjectId = sub.subjectId "
-		     + "WHERE sub.teacher.id = :teacherId "
-		     + "AND s.studentId IN ( "
-		     + "    SELECT h.student.studentId "
-		     + "    FROM Homework h "
-		     + "    WHERE h.homeworkDatetime >= :startDate "
-		     + "    AND h.homeworkDatetime < :endDate "
-		     + "    GROUP BY h.student.studentId "
-		     + "    HAVING h.homeworkPage is null"
-		     + ") "
-		     + "AND s.studentName LIKE :studentName")
+		       + "FROM Student s "
+		       + "JOIN StudentSubject ss ON s.studentId = ss.student.studentId "
+		       + "JOIN Subject sub ON ss.subject.subjectId = sub.subjectId "
+		       + "WHERE sub.teacher.id = :teacherId "
+		       + "AND s.studentId NOT IN ( "
+		       + "    SELECT h.student.studentId "
+		       + "    FROM Homework h "
+		       + "    WHERE h.homeworkDatetime >= :startDate "
+		       + "    AND h.homeworkDatetime < :endDate "
+		       + "    GROUP BY h.student.studentId) "
+			   + "AND s.studentName LIKE :studentName")
 	public Page<Student> findNoHomeworkStudentWithTeacher(
 			@Param("teacherId") String teacherId,
 			@Param("startDate") LocalDateTime startDate, 
@@ -178,14 +173,13 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
 		     + "FROM Student s "
 		     + "JOIN StudentSubject ss ON s.studentId = ss.student.studentId "
 		     + "JOIN Subject sub ON ss.subject.subjectId = sub.subjectId "
-		     + "WHERE sub.teacher.id = :teacherId "
+		     + "WHERE sub.teacher.userId = :teacherId "
 		     + "AND s.studentId IN ( "
 		     + "    SELECT h.student.studentId "
 		     + "    FROM Homework h "
 		     + "    WHERE h.homeworkDatetime >= :startDate "
 		     + "    AND h.homeworkDatetime < :endDate "
-		     + "    GROUP BY h.student.studentId "
-		     + ") "
+		     + "    GROUP BY h.student.studentId) "
 		     + "AND s.studentName LIKE :studentName")
 	public Page<Student> findAllStudentWithTeacher(
 			@Param("teacherId") String teacherId,
