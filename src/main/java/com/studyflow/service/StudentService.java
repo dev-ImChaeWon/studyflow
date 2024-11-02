@@ -51,6 +51,42 @@ public class StudentService {
 		this.attr = attr;
 	}
 
+	// id와 date로 해당 날짜와 해당 학생 숙제 정보 조회
+	public StudentDTO getHomeworkByIdAndDate(int id, Date date) {
+		Optional<Student> res = stur.findStudentByStudentIdAndHomeworkDatetime(id, date);
+		StudentDTO studto = new StudentDTO();
+		if (res.isPresent()) {
+			Student tmp = res.get();
+
+			studto.setStudentId(tmp.getStudentId());
+			studto.setStudentName(tmp.getStudentName());
+
+			List<HomeworkDTO> homework = new ArrayList<>();
+			for (Homework hm : tmp.getHomework()) {
+				HomeworkDTO homdto = new HomeworkDTO();
+				homdto.setHomeworkId(hm.getHomeworkId());
+
+				// Subject 초기화
+				if (hm.getSubject() != null) {
+					Subject subject = new Subject();
+					subject.setSubjectId(hm.getSubject().getSubjectId());
+					homdto.setSubject(subject);
+				}
+
+				homdto.setHomeworkPage(hm.getHomeworkPage());
+				homdto.setHomeworkDatetime(hm.getHomeworkDatetime());
+				homdto.setCompletedPage(hm.getCompletedPage());
+				homdto.setComment(hm.getComment());
+				homdto.setCompleteDatetime(hm.getCompleteDatetime());
+
+				homework.add(homdto);
+			}
+			studto.setHomework(homework);
+			return studto;
+		}
+		return null;
+	}
+
 	// 날짜별 출결 여부 조회 API (수정)
 	public List<AttendanceDTO> getAttendanceByDate2(Date attendanceDate) {
 		List<Student> allStudents = stur.findAll();
@@ -459,4 +495,6 @@ public class StudentService {
 
 		return studentPage;
 	}
+
+	
 }

@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -186,6 +187,10 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
 			@Param("startDate") LocalDateTime startDate, 
 			@Param("endDate") LocalDateTime endDate,
 			@Param("studentName") String studentName, Pageable p);
+
+	@Query("SELECT s FROM Student s JOIN s.homework h WHERE s.studentId = :studentId AND h.homeworkDatetime = :homeworkDatetime")
+	Optional<Student> findStudentByStudentIdAndHomeworkDatetime(@Param("studentId") Integer studentId, @Param("homeworkDatetime") Date homeworkDatetime);
+	public Optional<Student> findAllByStudent_StudentIdAndHomeworkDateTime(int id, Date date);
 }
 
 

@@ -1,5 +1,7 @@
 package com.studyflow.controller;
 
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -26,6 +28,14 @@ public class HomeworkController {
 	@GetMapping("/api/student-homework/{id}")
 	public ResponseEntity<StudentDTO> getHomeworkById(@PathVariable("id") int id) {
 		return ResponseEntity.status(200).body(stus.getHomeworkById(id));
+	}
+	
+	// id와 date로 해당 날짜와 해당 학생 숙제 정보 조회
+	@GetMapping("/api/student-homework/{id}/{date}")
+	public ResponseEntity<StudentDTO> getHomeworkByIdAndDate(
+			@PathVariable("id") int id,
+			@PathVariable("date") Date date) {
+		return ResponseEntity.status(200).body(stus.getHomeworkByIdAndDate(id, date));
 	}
 
 }
