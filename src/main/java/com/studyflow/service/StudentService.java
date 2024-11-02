@@ -179,7 +179,7 @@ public class StudentService {
 		}
 
 		if (teacherId == null) {
-			if (homeworkStatus == null) {
+			if (homeworkStatus.equals(null)) {
 				// teacherId X, 모든 parameter가 null
 				res = stur.findAllStudentWithoutTeacher(LocalDateTime.of(date, LocalTime.of(0, 0)),
 						LocalDateTime.of(date.plusDays(1), LocalTime.of(0, 0)), studentNamePattern, pr);
@@ -197,7 +197,7 @@ public class StudentService {
 						LocalDateTime.of(date.plusDays(1), LocalTime.of(0, 0)), studentNamePattern, pr);
 			}
 		} else {
-			if (homeworkStatus == null) {
+			if (homeworkStatus.equals(null)) {
 				// teacherId O, 나머지 모든 parameter가 null
 				res = stur.findAllStudentWithTeacher(teacherId, LocalDateTime.of(date, LocalTime.of(0, 0)),
 						LocalDateTime.of(date.plusDays(1), LocalTime.of(0, 0)), studentNamePattern, pr);
@@ -216,12 +216,12 @@ public class StudentService {
 			}
 		}
 
-//		System.out.println("=========조회 결과=========");
-//		System.out.println(res.getTotalElements());
-//		System.out.println(res.getTotalPages());
-//		for (Student tmp : res.getContent()) {
-//			System.out.println(tmp.getStudentId() + tmp.getStudentName());
-//		}
+		System.out.println("=========조회 결과=========");
+		System.out.println(res.getTotalElements());
+		System.out.println(res.getTotalPages());
+		for (Student tmp : res.getContent()) {
+			System.out.println(tmp.getStudentId() + tmp.getStudentName());
+		}
 
 		List<StudentDTO> li = new ArrayList<>();
 		for (Student stu : res.getContent()) {
@@ -230,19 +230,16 @@ public class StudentService {
 			studto.setStudentName(stu.getStudentName());
 
 			List<HomeworkDTO> hwList = new ArrayList<>();
-
 			for (Homework hw : stu.getHomework()) {
-				if(hw.getHomeworkDatetime().toLocalDate().compareTo(date) == 0) {
-					HomeworkDTO hwdto = new HomeworkDTO();
-					hwdto.setHomeworkId(hw.getHomeworkId());
-					Subject subject = new Subject();
-					subject.setSubjectName(hw.getSubject().getSubjectName());
-					hwdto.setSubject(subject);
-					hwdto.setHomeworkPage(hw.getHomeworkPage());
-					hwdto.setCompletedPage(hw.getCompletedPage());
-					hwdto.setComment(hw.getComment());
-					hwList.add(hwdto);
-				}
+				HomeworkDTO hwdto = new HomeworkDTO();
+				hwdto.setHomeworkId(hw.getHomeworkId());
+				Subject subject = new Subject();
+				subject.setSubjectName(hw.getSubject().getSubjectName());
+				hwdto.setSubject(subject);
+				hwdto.setHomeworkPage(hw.getHomeworkPage());
+				hwdto.setCompletedPage(hw.getCompletedPage());
+				hwdto.setComment(hw.getComment());
+				hwList.add(hwdto);
 			}
 
 			studto.setHomework(hwList);
@@ -260,7 +257,6 @@ public class StudentService {
 		return studentPage;
 	}
 
-	// 파라미터로 학생 및 학생 숙제 검색
 	public PageResponse<StudentDTO> getStudent(int page, int size, Date date, String teacherName, String homeworkStatus,
 			String studentName) {
 		String findByTeacherPattern = (teacherName != null && !teacherName.trim().isEmpty() && teacherName != "")
