@@ -30,12 +30,36 @@ public class AttendanceController {
 	}
 	
 	// 출결 수정(생성) API
+//	@PostMapping("/api/attendance-update")
+//    public ResponseEntity<AttendanceDTO> updateAttendance(@RequestBody AttendanceDTO attendanceDTO) {
+//        AttendanceDTO updatedAttendanceDTO = atts.updateAttendance(attendanceDTO);
+//        
+//        return ResponseEntity.status(201).body(atts.updateAttendance(attendanceDTO));
+//    }
+	
+	// 출결 수정(생성) API
 	@PostMapping("/api/attendance-update")
-    public ResponseEntity<AttendanceDTO> updateAttendance(@RequestBody AttendanceDTO attendanceDTO) {
-        AttendanceDTO updatedAttendanceDTO = atts.updateAttendance(attendanceDTO);
-        
-        return ResponseEntity.status(201).body(atts.updateAttendance(attendanceDTO));
-    }
+	public ResponseEntity<AttendanceDTO> updateAttendance(
+	        @RequestBody AttendanceDTO attendanceDTO) {
+	    Date attendanceDate;
+
+	    try {
+	        // 날짜 포맷 처리
+	        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	        String dateString = sdf.format(attendanceDTO.getAttendanceDate()); // Date를 String으로 변환
+	        attendanceDate = sdf.parse(dateString); // 문자열을 Date로 변환
+	        attendanceDTO.setAttendanceDate(attendanceDate); // DTO에 날짜 설정
+	    } catch (ParseException e) {
+	        // 예외 처리: 잘못된 날짜 포맷
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null); // 400 BAD REQUEST
+	    }
+
+	    // 출결 업데이트
+	    AttendanceDTO updatedAttendanceDTO = atts.updateAttendance(attendanceDTO);
+//	    return ResponseEntity.status(HttpStatus.CREATED).body(updatedAttendanceDTO); // 201 CREATED
+	    return ResponseEntity.status(201).body(atts.updateAttendance(attendanceDTO));
+	}
+
 	
 //	// 출결 삭제 API
 //	@DeleteMapping("/api/attendance-delete/{id}/{date}")
@@ -48,23 +72,20 @@ public class AttendanceController {
 //	}
 	
 	@DeleteMapping("/api/attendance-delete/{studentId}/{attendanceDate}")
-    public ResponseEntity<String> deleteAttendance(
-            @PathVariable("studentId") Integer studentId,
-            @PathVariable("attendanceDate") String attendanceDateStr) {
-        try {
-            // 날짜 포맷 처리
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            Date attendanceDate = sdf.parse(attendanceDateStr);
-            
-            // 출결 삭제 메서드 호출
-            atts.deleteAttendance(studentId, attendanceDate);
-            return ResponseEntity.ok("출결 삭제 성공");
-        } catch (ParseException e) {
-            return ResponseEntity.badRequest().body("유효하지 않은 날짜 형식입니다.");
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류가 발생했습니다.");
-        }
-    }
+	public ResponseEntity<String> deleteAttendance(
+	        @PathVariable("studentId") Integer studentId,
+	        @PathVariable("attendanceDate") String attendanceDateStr) {
+	    try {
+	        // 날짜 포맷 처리
+	        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	        Date attendanceDate = sdf.parse(attendanceDateStr);
+	        
+	        atts.deleteAttendance(studentId, attendanceDate);
+	        return ResponseEntity.ok("출결 삭제 성공");
+	        
+	    } catch (ParseException e) {
+	        // 예외 처리: 잘못된 날짜 포맷
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null); // 400 BAD REQUEST
+	    }
+	}
 }
