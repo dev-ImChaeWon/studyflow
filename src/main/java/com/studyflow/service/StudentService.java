@@ -191,7 +191,7 @@ public class StudentService {
 			studentNamePattern = "%" + studentName + "%";
 		}
 
-		if (teacherId == null) {
+		if (teacherId == null || teacherId.equals("all")) {
 			if (homeworkStatus == null) {
 				// teacherId X, 모든 parameter가 null
 				res = stur.findAllStudentWithoutTeacher(LocalDateTime.of(date, LocalTime.of(0, 0)),
