@@ -9,9 +9,10 @@ import org.springframework.data.repository.query.Param;
 
 import com.studyflow.entity.Homework;
 
-public interface HomeworkRepository extends JpaRepository<Homework, Integer>{
+public interface HomeworkRepository extends JpaRepository<Homework, Integer> {
 
 	// 테스트용 쿼리
 	@Query("SELECT h FROM Homework h WHERE h.student.studentId = :studentId AND h.homeworkDatetime >= :startDate AND h.homeworkDatetime < :endDate")
-	List<Homework> findHomeworkInDateRange(@Param("studentId") int studentId, @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
+	List<Homework> findHomeworkInDateRange(@Param("studentId") int studentId,
+			@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 }

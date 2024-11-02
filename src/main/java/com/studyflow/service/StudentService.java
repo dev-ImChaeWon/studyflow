@@ -64,23 +64,25 @@ public class StudentService {
 
 			List<HomeworkDTO> homework = new ArrayList<>();
 			for (Homework hm : tmp.getHomework()) {
-				HomeworkDTO homdto = new HomeworkDTO();
-				homdto.setHomeworkId(hm.getHomeworkId());
-
-				// Subject 초기화
-				if (hm.getSubject() != null) {
-					Subject subject = new Subject();
-					subject.setSubjectId(hm.getSubject().getSubjectId());
-					homdto.setSubject(subject);
+				if(hm.getHomeworkDatetime().toLocalDate().isEqual(date)) {					
+					HomeworkDTO homdto = new HomeworkDTO();
+					homdto.setHomeworkId(hm.getHomeworkId());
+					
+					// Subject 초기화
+					if (hm.getSubject() != null) {
+						Subject subject = new Subject();
+						subject.setSubjectId(hm.getSubject().getSubjectId());
+						homdto.setSubject(subject);
+					}
+					
+					homdto.setHomeworkPage(hm.getHomeworkPage());
+					homdto.setHomeworkDatetime(hm.getHomeworkDatetime());
+					homdto.setCompletedPage(hm.getCompletedPage());
+					homdto.setComment(hm.getComment());
+					homdto.setCompleteDatetime(hm.getCompleteDatetime());
+					
+					homework.add(homdto);
 				}
-
-				homdto.setHomeworkPage(hm.getHomeworkPage());
-				homdto.setHomeworkDatetime(hm.getHomeworkDatetime());
-				homdto.setCompletedPage(hm.getCompletedPage());
-				homdto.setComment(hm.getComment());
-				homdto.setCompleteDatetime(hm.getCompleteDatetime());
-
-				homework.add(homdto);
 			}
 			studto.setHomework(homework);
 			return studto;
@@ -272,7 +274,7 @@ public class StudentService {
 						LocalDateTime.of(date.plusDays(1), LocalTime.of(0, 0)), studentNamePattern, pr);
 			}
 		} else {
-			if (homeworkStatus.equals(null)) {
+			if (homeworkStatus == null) {
 				// teacherId O, 나머지 모든 parameter가 null
 				res = stur.findAllStudentWithTeacher(teacherId, LocalDateTime.of(date, LocalTime.of(0, 0)),
 						LocalDateTime.of(date.plusDays(1), LocalTime.of(0, 0)), studentNamePattern, pr);
@@ -291,12 +293,12 @@ public class StudentService {
 			}
 		}
 
-		System.out.println("=========조회 결과=========");
-		System.out.println(res.getTotalElements());
-		System.out.println(res.getTotalPages());
-		for (Student tmp : res.getContent()) {
-			System.out.println(tmp.getStudentId() + tmp.getStudentName());
-		}
+//		System.out.println("=========조회 결과=========");
+//		System.out.println(res.getTotalElements());
+//		System.out.println(res.getTotalPages());
+//		for (Student tmp : res.getContent()) {
+//			System.out.println(tmp.getStudentId() + tmp.getStudentName());
+//		}
 
 		List<StudentDTO> li = new ArrayList<>();
 		for (Student stu : res.getContent()) {

@@ -40,10 +40,6 @@ public class HomeworkController {
 	public ResponseEntity<StudentDTO> getHomeworkByIdAndDate(
 			@RequestParam(name = "id", required = false) int id,
 			@RequestParam(name = "date", required = true) LocalDate date) {
-//		LocalDateTime homeworkDatetime = date.toInstant()
-//                .atZone(ZoneId.systemDefault())
-//                .toLocalDateTime();
-//		return ResponseEntity.status(200).body(stus.getHomeworkByIdAndDate(id, homeworkDatetime));
 		return ResponseEntity.status(200).body(stus.getHomeworkByIdAndDate(id, date));
 	}
 	

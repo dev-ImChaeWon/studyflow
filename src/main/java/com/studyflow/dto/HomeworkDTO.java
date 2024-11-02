@@ -11,7 +11,7 @@ public class HomeworkDTO {
 
 	private Subject subject = new Subject();
 
-	private Student student;
+	private Student student = new Student();
 
 	private Integer homeworkPage;
 

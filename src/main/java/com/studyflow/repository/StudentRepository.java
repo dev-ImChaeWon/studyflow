@@ -105,16 +105,28 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
 			@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
 			@Param("studentName") String studentName, Pageable p);
 
-	@Query("SELECT s " + "FROM Student s " + "JOIN StudentSubject ss ON s.studentId = ss.student.studentId "
-			+ "JOIN Subject sub ON ss.subject.subjectId = sub.subjectId " + "WHERE sub.teacher.userId = :teacherId "
-			+ "AND s.studentId IN ( " + "    SELECT h.student.studentId " + "    FROM Homework h "
-			+ "    WHERE h.homeworkDatetime >= :startDate " + "    AND h.homeworkDatetime < :endDate "
+	@Query("SELECT s " 
+			+ "FROM Student s " 
+			+ "JOIN StudentSubject ss ON s.studentId = ss.student.studentId "
+			+ "JOIN Subject sub ON ss.subject.subjectId = sub.subjectId " 
+			+ "WHERE sub.teacher.userId = :teacherId "
+			+ "AND s.studentId IN ( " 
+			+ "    SELECT h.student.studentId " 
+			+ "    FROM Homework h "
+			+ "    WHERE h.homeworkDatetime >= :startDate " 
+			+ "    AND h.homeworkDatetime < :endDate "
 			+ "    GROUP BY h.student.studentId) " + "AND s.studentName LIKE :studentName")
 	public Page<Student> findAllStudentWithTeacher(@Param("teacherId") String teacherId,
-			@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+			@Param("startDate") LocalDateTime startDate, 
+			@Param("endDate") LocalDateTime endDate,
 			@Param("studentName") String studentName, Pageable p);
 
-	@Query("SELECT s FROM Student s JOIN s.homework h WHERE s.studentId = :studentId AND h.homeworkDatetime >= :startDate AND h.homeworkDatetime < :endDate")
+	@Query("SELECT s "
+			+ "FROM Student s "
+			+ "JOIN s.homework h "
+			+ "WHERE s.studentId = :studentId "
+			+ "AND h.homeworkDatetime >= :startDate "
+			+ "AND h.homeworkDatetime < :endDate")
 	Optional<Student> findStudentByStudentIdAndHomeworkDatetime(
 	        @Param("studentId") int studentId, 
 	        @Param("startDate") LocalDateTime startDate,
