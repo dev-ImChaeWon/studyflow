@@ -21,6 +21,7 @@ import com.studyflow.dto.AttendanceDTO;
 import com.studyflow.dto.HomeworkDTO;
 import com.studyflow.dto.StudentDTO;
 import com.studyflow.entity.Attendance;
+import com.studyflow.entity.AttendanceId;
 import com.studyflow.entity.Homework;
 import com.studyflow.entity.Student;
 import com.studyflow.entity.Subject;
@@ -50,10 +51,22 @@ public class StudentService {
 		this.attr = attr;
 	}
 
+	public void getAttendanceByDate2(Date attendanceDate) {
+		List<Student> allStudents = stur.findAll();
+		for(Student s : allStudents) {
+			Optional<Attendance> optAttendance = attr.findById(s.getStudentId(), attendanceDate);
+			if(optAttendance.isPresent()) {
+				// 해당 날짜에 해당 학생의 출결이 등록되었다는 의미
+			}else {
+				// 출석체크를 하지 않은 상태
+			}
+		}
+	}
+	
 	// 날짜별 출결 여부 조회 API
-	public List<AttendanceDTO> getAttendanceByDate(Date AttendanceDate) {
+	public List<AttendanceDTO> getAttendanceByDate(Date attendanceDate) {
 		List<Attendance> all = attr.findAll();
-		List<Attendance> attli = attr.findByAttendanceDate(AttendanceDate);
+		List<Attendance> attli = attr.findByAttendanceDate(attendanceDate);
 		List<AttendanceDTO> attres = new ArrayList<>();
 
 		for (Attendance a : attli) {
@@ -70,9 +83,9 @@ public class StudentService {
 
 		}
 
-		if (AttendanceDate != null) {
+		if (attendanceDate != null) {
 			for (Attendance a : all) {
-				if (AttendanceDate.compareTo(a.getId().getAttendanceDate()) != 0) {
+				if (attendanceDate.compareTo(a.getId().getAttendanceDate()) != 0) {
 					AttendanceDTO attdto = new AttendanceDTO();
 					attdto.setStudentId(a.getStudent().getStudentId());
 
