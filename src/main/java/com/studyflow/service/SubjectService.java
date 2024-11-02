@@ -10,6 +10,8 @@ import com.studyflow.dto.SubjectDTO;
 import com.studyflow.entity.Subject;
 import com.studyflow.repository.SubjectRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class SubjectService {
 
@@ -20,6 +22,7 @@ public class SubjectService {
 		this.subr = subr;
 	}
 	
+	@Transactional
 	public List<SubjectDTO> getSubjectName() {
 		List<Subject> li = subr.findAll();
 		List<SubjectDTO> res = new ArrayList<>();
