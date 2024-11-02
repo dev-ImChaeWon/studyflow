@@ -21,6 +21,7 @@ import com.studyflow.dto.AttendanceDTO;
 import com.studyflow.dto.HomeworkDTO;
 import com.studyflow.dto.StudentDTO;
 import com.studyflow.entity.Attendance;
+import com.studyflow.entity.AttendanceId;
 import com.studyflow.entity.Homework;
 import com.studyflow.entity.Student;
 import com.studyflow.entity.Subject;
@@ -50,44 +51,79 @@ public class StudentService {
 		this.attr = attr;
 	}
 
-	// 날짜별 출결 여부 조회 API
-	public List<AttendanceDTO> getAttendanceByDate(Date AttendanceDate) {
-		List<Attendance> all = attr.findAll();
-		List<Attendance> attli = attr.findByAttendanceDate(AttendanceDate);
+	// 날짜별 출결 여부 조회 API (수정)
+	public List<AttendanceDTO> getAttendanceByDate2(Date attendanceDate) {
+		List<Student> allStudents = stur.findAll();
+		List<Attendance> attli = attr.findByAttendanceDate(attendanceDate);
 		List<AttendanceDTO> attres = new ArrayList<>();
+		
+		for (Student s : allStudents) {
+	        Optional<Attendance> optAttendance = attr.findById(s.getStudentId(), attendanceDate);
 
-		for (Attendance a : attli) {
-			AttendanceDTO attdto = new AttendanceDTO();
-			attdto.setStudentId(a.getStudent().getStudentId());
-			attdto.setIsAttend(a.getIsAttend());
-			attdto.setAttendanceDate(a.getAttendanceDate());
+	        AttendanceDTO attdto = new AttendanceDTO();
+	        attdto.setStudentId(s.getStudentId());
+	        attdto.setAttendanceDate(attendanceDate);
 
-			StudentDTO studto = new StudentDTO();
-			studto.setStudentName(a.getStudent().getStudentName());
-			attdto.setStudent(studto);
+	        if (optAttendance.isPresent()) {
+	            // 해당 날짜에 해당 학생의 출결이 등록된 경우
+	            Attendance a = optAttendance.get();
+	            attdto.setIsAttend(a.getIsAttend());
+	            
+	            StudentDTO studto = new StudentDTO();
+	            studto.setStudentName(s.getStudentName());
+	            attdto.setStudent(studto);
+	        } else {
+	            // 출석 체크를 하지 않은 상태
+	            attdto.setIsAttend(null); // 출석하지 않았다고 설정
+	            StudentDTO studto = new StudentDTO();
+	            studto.setStudentName(s.getStudentName());
+	            attdto.setStudent(studto);
+	        }
 
-			attres.add(attdto);
-
+	        attres.add(attdto);
 		}
-
-		if (AttendanceDate != null) {
-			for (Attendance a : all) {
-				if (AttendanceDate.compareTo(a.getId().getAttendanceDate()) != 0) {
-					AttendanceDTO attdto = new AttendanceDTO();
-					attdto.setStudentId(a.getStudent().getStudentId());
-
-					StudentDTO studto = new StudentDTO();
-					studto.setStudentName(a.getStudent().getStudentName());
-					attdto.setStudent(studto);
-
-					attres.add(attdto);
-
-				}
-			}
-		}
-
+		
 		return attres;
 	}
+	
+//	// 날짜별 출결 여부 조회 API
+//	public List<AttendanceDTO> getAttendanceByDate(Date attendanceDate) {
+//		List<Attendance> all = attr.findAll();
+//		List<Attendance> attli = attr.findByAttendanceDate(attendanceDate);
+//		List<AttendanceDTO> attres = new ArrayList<>();
+//
+//		for (Attendance a : attli) {
+//			AttendanceDTO attdto = new AttendanceDTO();
+//			attdto.setStudentId(a.getStudent().getStudentId());
+//			attdto.setIsAttend(a.getIsAttend());
+//			attdto.setAttendanceDate(a.getAttendanceDate());
+//
+//			StudentDTO studto = new StudentDTO();
+//			studto.setStudentName(a.getStudent().getStudentName());
+//			attdto.setStudent(studto);
+//
+//			attres.add(attdto);
+//
+//		}
+//
+//		if (attendanceDate != null) {
+//			for (Attendance a : all) {
+//				if (attendanceDate.compareTo(a.getId().getAttendanceDate()) != 0) {
+//					AttendanceDTO attdto = new AttendanceDTO();
+//					attdto.setStudentId(a.getStudent().getStudentId());
+//
+//					StudentDTO studto = new StudentDTO();
+//					studto.setStudentName(a.getStudent().getStudentName());
+//					attdto.setStudent(studto);
+//
+//					attres.add(attdto);
+//
+//				}
+//			}
+//		}
+//
+//		return attres;
+//	}
 
 //	public List<AttendanceDTO> getIsAttendance() {
 //		List<Attendance> attli = attr.findAll();

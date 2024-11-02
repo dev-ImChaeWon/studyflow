@@ -38,7 +38,7 @@ public class StudentController {
 	@GetMapping("/api/attendance")
 	public ResponseEntity<List<AttendanceDTO>> getAttendanceByDate(
 			@RequestParam(name = "date", required = true) Date date) {
-		List<AttendanceDTO> res = stus.getAttendanceByDate(date);
+		List<AttendanceDTO> res = stus.getAttendanceByDate2(date);
 
 		return ResponseEntity.status(200).body(res);
 	}
