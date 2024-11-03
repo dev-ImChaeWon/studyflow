@@ -9,4 +9,5 @@ import com.studyflow.entity.Subject;
 public interface SubjectRepository extends JpaRepository<Subject, Integer>{
 
 	public List<Subject> findAll();
+	
 }

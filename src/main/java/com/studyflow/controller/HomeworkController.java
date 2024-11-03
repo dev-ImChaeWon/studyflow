@@ -43,8 +43,12 @@ public class HomeworkController {
 		return ResponseEntity.status(200).body(stus.getHomeworkByIdAndDate(id, date));
 	}
 	
+<<<<<<< HEAD
 
 	// 테스트용 
+=======
+	// 날짜 필터 테스트용 
+>>>>>>> 0e372e891cdb198d83d3c0f2728a53df3bbfaaf2
 	@GetMapping("/api/get-homework")
 	public ResponseEntity<HomeworkDTO> getHomeworkByDateRange(
 			@RequestParam(name = "date", required=true) LocalDate date){

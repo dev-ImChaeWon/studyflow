@@ -29,6 +29,7 @@ public class HomeworkService {
 		this.homr = homr;
 	}
 	
+	// 날짜 필터 테스트용
 	public HomeworkDTO getHomeworkByDateRange(LocalDate date) {
 		HomeworkDTO homdto = new HomeworkDTO();
 		
