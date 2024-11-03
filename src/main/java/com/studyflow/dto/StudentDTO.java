@@ -4,7 +4,6 @@ import java.util.List;
 
 public class StudentDTO {
 
-<<<<<<< HEAD
     private Integer studentId; // 학생 ID
     private String studentName; // 학생 이름
     private List<HomeworkDTO> homework;
@@ -33,20 +32,6 @@ public class StudentDTO {
     public void setSubjects(List<SubjectDTO> subjects) { // 과목 목록 설정
         this.subjects = subjects;
     }
-=======
-	private Integer studentId;
-	private String studentName;
-	private List<HomeworkDTO> homework;
-	private List<SubjectDTO> subject;
-
-	public List<SubjectDTO> getSubject() {
-		return subject;
-	}
-
-	public void setSubject(List<SubjectDTO> subject) {
-		this.subject = subject;
-	}
->>>>>>> 0e372e891cdb198d83d3c0f2728a53df3bbfaaf2
 
 	public List<HomeworkDTO> getHomework() {
 		return homework;
