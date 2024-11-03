@@ -4,11 +4,13 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.studyflow.dto.HomeworkDTO;
+import com.studyflow.dto.StudentDTO;
 import com.studyflow.entity.Homework;
 import com.studyflow.repository.HomeworkRepository;
 import com.studyflow.repository.StudentRepository;
@@ -42,4 +44,5 @@ public class HomeworkService {
 		
 		return homdto;
 	}
+	
 }

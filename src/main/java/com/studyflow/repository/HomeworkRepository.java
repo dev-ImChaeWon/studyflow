@@ -1,5 +1,6 @@
 package com.studyflow.repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -15,4 +16,5 @@ public interface HomeworkRepository extends JpaRepository<Homework, Integer> {
 	@Query("SELECT h FROM Homework h WHERE h.student.studentId = :studentId AND h.homeworkDatetime >= :startDate AND h.homeworkDatetime < :endDate")
 	List<Homework> findHomeworkInDateRange(@Param("studentId") int studentId,
 			@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
+	
 }
