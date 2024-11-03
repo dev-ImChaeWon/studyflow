@@ -257,7 +257,6 @@ public class StudentService {
 	            }
 	        }
 
-	        // 과목 목록을 StudentDTO에 설정
 	        studto.setSubjects(subjects); // 과목 목록 설정
 	        return studto; // 완성된 StudentDTO 반환
 	    }
