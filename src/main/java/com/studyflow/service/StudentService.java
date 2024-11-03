@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import com.studyflow.dto.AttendanceDTO;
 import com.studyflow.dto.HomeworkDTO;
 import com.studyflow.dto.StudentDTO;
+import com.studyflow.dto.SubjectDTO;
 import com.studyflow.entity.Attendance;
 import com.studyflow.entity.AttendanceId;
 import com.studyflow.entity.Homework;
@@ -70,7 +71,7 @@ public class StudentService {
 					
 					// Subject 초기화
 					if (hm.getSubject() != null) {
-						Subject subject = new Subject();
+						SubjectDTO subject = new SubjectDTO();
 						subject.setSubjectId(hm.getSubject().getSubjectId());
 						homdto.setSubject(subject);
 					}
@@ -215,7 +216,7 @@ public class StudentService {
 
 				// Subject 초기화
 				if (hm.getSubject() != null) {
-					Subject subject = new Subject();
+					SubjectDTO subject = new SubjectDTO();
 					subject.setSubjectId(hm.getSubject().getSubjectId());
 					homdto.setSubject(subject);
 				}
@@ -310,7 +311,9 @@ public class StudentService {
 			for (Homework hw : stu.getHomework()) {
 				HomeworkDTO hwdto = new HomeworkDTO();
 				hwdto.setHomeworkId(hw.getHomeworkId());
-				Subject subject = new Subject();
+				SubjectDTO subject = new SubjectDTO();
+				
+				subject.setSubjectId(hw.getSubject().getSubjectId());
 				subject.setSubjectName(hw.getSubject().getSubjectName());
 				hwdto.setSubject(subject);
 				hwdto.setHomeworkPage(hw.getHomeworkPage());
@@ -388,7 +391,7 @@ public class StudentService {
 			for (Homework hw : stu.getHomework()) {
 				HomeworkDTO hwdto = new HomeworkDTO();
 				hwdto.setHomeworkId(hw.getHomeworkId());
-				Subject subject = new Subject();
+				SubjectDTO subject = new SubjectDTO();
 				subject.setSubjectName(hw.getSubject().getSubjectName());
 				hwdto.setSubject(subject);
 				hwdto.setHomeworkPage(hw.getHomeworkPage());

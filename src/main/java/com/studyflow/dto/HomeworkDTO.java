@@ -9,9 +9,9 @@ public class HomeworkDTO {
 
 	private Integer homeworkId;
 
-	private Subject subject = new Subject();
+	private SubjectDTO subject;
 
-	private Student student = new Student();
+	private StudentDTO student;
 
 	private Integer homeworkPage;
 
@@ -31,19 +31,19 @@ public class HomeworkDTO {
 		this.homeworkId = homeworkId;
 	}
 
-	public Subject getSubject() {
+	public SubjectDTO getSubject() {
 		return subject;
 	}
 
-	public void setSubject(Subject subject) {
+	public void setSubject(SubjectDTO subject) {
 		this.subject = subject;
 	}
 
-	public Student getStudent() {
+	public StudentDTO getStudent() {
 		return student;
 	}
 
-	public void setStudent(Student student) {
+	public void setStudent(StudentDTO student) {
 		this.student = student;
 	}
 
@@ -87,4 +87,5 @@ public class HomeworkDTO {
 		this.completeDatetime = completeDatetime;
 	}
 
+	
 }
