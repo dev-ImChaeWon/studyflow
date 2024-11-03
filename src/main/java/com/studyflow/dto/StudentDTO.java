@@ -7,6 +7,15 @@ public class StudentDTO {
 	private Integer studentId;
 	private String studentName;
 	private List<HomeworkDTO> homework;
+	private List<SubjectDTO> subject;
+
+	public List<SubjectDTO> getSubject() {
+		return subject;
+	}
+
+	public void setSubject(List<SubjectDTO> subject) {
+		this.subject = subject;
+	}
 
 	public List<HomeworkDTO> getHomework() {
 		return homework;

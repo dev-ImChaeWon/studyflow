@@ -30,6 +30,8 @@ import com.studyflow.entity.Attendance;
 import com.studyflow.repository.AttendanceRepository;
 import com.studyflow.repository.HomeworkRepository;
 import com.studyflow.repository.StudentRepository;
+import com.studyflow.repository.StudentSubjectRepository;
+import com.studyflow.repository.SubjectRepository;
 import com.studyflow.repository.TeacherRepository;
 import com.studyflow.response.PageResponse;
 
@@ -42,20 +44,24 @@ public class StudentService {
 	StudentRepository stur;
 	HomeworkRepository homr;
 	AttendanceRepository attr;
+	SubjectRepository subr;
+	StudentSubjectRepository stusubr;
 
 	@Autowired
 	public StudentService(TeacherRepository tear, StudentRepository stur, HomeworkRepository homr,
-			AttendanceRepository attr) {
+			AttendanceRepository attr, SubjectRepository subr, StudentSubjectRepository stusubr) {
 		this.tear = tear;
 		this.stur = stur;
 		this.homr = homr;
 		this.attr = attr;
+		this.subr = subr;
+		this.stusubr = stusubr;
 	}
 
 	// id와 date로 해당 날짜와 해당 학생 숙제 정보 조회
 	public StudentDTO getHomeworkByIdAndDate(int id, LocalDate date) {
-		Optional<Student> res = stur.findStudentByStudentIdAndHomeworkDatetime(id, LocalDateTime.of(date, LocalTime.of(0, 0)),
-				LocalDateTime.of(date.plusDays(1), LocalTime.of(0, 0)));
+		Optional<Student> res = stur.findStudentByStudentIdAndHomeworkDatetime(id,
+				LocalDateTime.of(date, LocalTime.of(0, 0)), LocalDateTime.of(date.plusDays(1), LocalTime.of(0, 0)));
 		StudentDTO studto = new StudentDTO();
 		if (res.isPresent()) {
 			Student tmp = res.get();
@@ -65,23 +71,23 @@ public class StudentService {
 
 			List<HomeworkDTO> homework = new ArrayList<>();
 			for (Homework hm : tmp.getHomework()) {
-				if(hm.getHomeworkDatetime().toLocalDate().isEqual(date)) {					
+				if (hm.getHomeworkDatetime().toLocalDate().isEqual(date)) {
 					HomeworkDTO homdto = new HomeworkDTO();
 					homdto.setHomeworkId(hm.getHomeworkId());
-					
+
 					// Subject 초기화
 					if (hm.getSubject() != null) {
 						SubjectDTO subject = new SubjectDTO();
 						subject.setSubjectId(hm.getSubject().getSubjectId());
 						homdto.setSubject(subject);
 					}
-					
+
 					homdto.setHomeworkPage(hm.getHomeworkPage());
 					homdto.setHomeworkDatetime(hm.getHomeworkDatetime());
 					homdto.setCompletedPage(hm.getCompletedPage());
 					homdto.setComment(hm.getComment());
 					homdto.setCompleteDatetime(hm.getCompleteDatetime());
-					
+
 					homework.add(homdto);
 				}
 			}
@@ -96,36 +102,36 @@ public class StudentService {
 		List<Student> allStudents = stur.findAll();
 		List<Attendance> attli = attr.findByAttendanceDate(attendanceDate);
 		List<AttendanceDTO> attres = new ArrayList<>();
-		
+
 		for (Student s : allStudents) {
-	        Optional<Attendance> optAttendance = attr.findById(s.getStudentId(), attendanceDate);
+			Optional<Attendance> optAttendance = attr.findById(s.getStudentId(), attendanceDate);
 
-	        AttendanceDTO attdto = new AttendanceDTO();
-	        attdto.setStudentId(s.getStudentId());
-	        attdto.setAttendanceDate(attendanceDate);
+			AttendanceDTO attdto = new AttendanceDTO();
+			attdto.setStudentId(s.getStudentId());
+			attdto.setAttendanceDate(attendanceDate);
 
-	        if (optAttendance.isPresent()) {
-	            // 해당 날짜에 해당 학생의 출결이 등록된 경우
-	            Attendance a = optAttendance.get();
-	            attdto.setIsAttend(a.getIsAttend());
-	            
-	            StudentDTO studto = new StudentDTO();
-	            studto.setStudentName(s.getStudentName());
-	            attdto.setStudent(studto);
-	        } else {
-	            // 출석 체크를 하지 않은 상태
-	            attdto.setIsAttend(null); // 출석하지 않았다고 설정
-	            StudentDTO studto = new StudentDTO();
-	            studto.setStudentName(s.getStudentName());
-	            attdto.setStudent(studto);
-	        }
+			if (optAttendance.isPresent()) {
+				// 해당 날짜에 해당 학생의 출결이 등록된 경우
+				Attendance a = optAttendance.get();
+				attdto.setIsAttend(a.getIsAttend());
 
-	        attres.add(attdto);
+				StudentDTO studto = new StudentDTO();
+				studto.setStudentName(s.getStudentName());
+				attdto.setStudent(studto);
+			} else {
+				// 출석 체크를 하지 않은 상태
+				attdto.setIsAttend(null); // 출석하지 않았다고 설정
+				StudentDTO studto = new StudentDTO();
+				studto.setStudentName(s.getStudentName());
+				attdto.setStudent(studto);
+			}
+
+			attres.add(attdto);
 		}
-		
+
 		return attres;
 	}
-	
+
 //	// 날짜별 출결 여부 조회 API
 //	public List<AttendanceDTO> getAttendanceByDate(Date attendanceDate) {
 //		List<Attendance> all = attr.findAll();
@@ -254,7 +260,6 @@ public class StudentService {
 			studentNamePattern = "%" + studentName + "%";
 		}
 
-
 		if (teacherId == null || teacherId.equals("all")) {
 			if (homeworkStatus == null) {
 
@@ -307,22 +312,31 @@ public class StudentService {
 			studto.setStudentId(stu.getStudentId());
 			studto.setStudentName(stu.getStudentName());
 
-			List<HomeworkDTO> hwList = new ArrayList<>();
-			for (Homework hw : stu.getHomework()) {
-				HomeworkDTO hwdto = new HomeworkDTO();
-				hwdto.setHomeworkId(hw.getHomeworkId());
-				SubjectDTO subject = new SubjectDTO();
-				
-				subject.setSubjectId(hw.getSubject().getSubjectId());
-				subject.setSubjectName(hw.getSubject().getSubjectName());
-				hwdto.setSubject(subject);
-				hwdto.setHomeworkPage(hw.getHomeworkPage());
-				hwdto.setCompletedPage(hw.getCompletedPage());
-				hwdto.setComment(hw.getComment());
-				hwList.add(hwdto);
+			List<SubjectDTO> subList = new ArrayList<>();
+			for (Subject subject : stusubr.findAllSubjectsByStudentId(stu.getStudentId())) {
+				SubjectDTO subdto = new SubjectDTO();
+				subdto.setSubjectId(subject.getSubjectId());
+				subdto.setSubjectName(subject.getSubjectName());
+
+				List<HomeworkDTO> hwList = new ArrayList<>();
+				for (Homework hw : stu.getHomework()) {
+					if (hw.getHomeworkDatetime().toLocalDate().isEqual(date)) {
+						if (subject.getSubjectId() == hw.getSubject().getSubjectId()) {
+							HomeworkDTO hwdto = new HomeworkDTO();
+							hwdto.setHomeworkId(hw.getHomeworkId());
+							hwdto.setHomeworkPage(hw.getHomeworkPage());
+							hwdto.setCompletedPage(hw.getCompletedPage());
+							hwdto.setComment(hw.getComment());
+							hwList.add(hwdto);
+						}
+					}
+				}
+
+				subdto.setHomework(hwList);
+				subList.add(subdto);
 			}
 
-			studto.setHomework(hwList);
+			studto.setSubject(subList);
 			li.add(studto);
 		}
 
@@ -504,5 +518,4 @@ public class StudentService {
 		return studentPage;
 	}
 
-	
 }
