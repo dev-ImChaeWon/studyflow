@@ -1,7 +1,7 @@
 package com.studyflow.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -10,7 +10,6 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,18 +22,13 @@ import com.studyflow.dto.HomeworkDTO;
 import com.studyflow.dto.StudentDTO;
 import com.studyflow.dto.SubjectDTO;
 import com.studyflow.entity.Attendance;
-import com.studyflow.entity.AttendanceId;
 import com.studyflow.entity.Homework;
 import com.studyflow.entity.Student;
 import com.studyflow.entity.Subject;
-import com.studyflow.entity.Attendance;
 import com.studyflow.repository.AttendanceRepository;
 import com.studyflow.repository.HomeworkRepository;
 import com.studyflow.repository.StudentRepository;
-<<<<<<< HEAD
-=======
 import com.studyflow.repository.StudentSubjectRepository;
->>>>>>> 0e372e891cdb198d83d3c0f2728a53df3bbfaaf2
 import com.studyflow.repository.SubjectRepository;
 import com.studyflow.repository.TeacherRepository;
 import com.studyflow.response.PageResponse;
@@ -59,43 +53,47 @@ public class StudentService {
 		this.homr = homr;
 		this.attr = attr;
 		this.subr = subr;
+		this.stusubr = stusubr;
+
 	}
-	
 
 	// id와 date로 해당 날짜와 해당 학생 숙제 정보 조회
 	public StudentDTO getHomeworkByIdAndDate(int id, LocalDate date) {
 		Optional<Student> res = stur.findStudentByStudentIdAndHomeworkDatetime(id,
 				LocalDateTime.of(date, LocalTime.of(0, 0)), LocalDateTime.of(date.plusDays(1), LocalTime.of(0, 0)));
+		
 		StudentDTO studto = new StudentDTO();
+		
 		if (res.isPresent()) {
 			Student tmp = res.get();
 
 			studto.setStudentId(tmp.getStudentId());
 			studto.setStudentName(tmp.getStudentName());
-
-			List<HomeworkDTO> homework = new ArrayList<>();
-			for (Homework hm : tmp.getHomework()) {
-				if (hm.getHomeworkDatetime().toLocalDate().isEqual(date)) {
-					HomeworkDTO homdto = new HomeworkDTO();
-					homdto.setHomeworkId(hm.getHomeworkId());
-
-					// Subject 초기화
-					if (hm.getSubject() != null) {
-						SubjectDTO subject = new SubjectDTO();
-						subject.setSubjectId(hm.getSubject().getSubjectId());
-						homdto.setSubject(subject);
+			
+			List<SubjectDTO> subject = new ArrayList<>();
+			for (Subject s : stusubr.findAllSubjectsByStudentId(tmp.getStudentId())) {
+				SubjectDTO subdto = new SubjectDTO();
+				subdto.setSubjectId(s.getSubjectId());
+				subdto.setSubjectName(s.getSubjectName());
+				
+				List<HomeworkDTO> homework = new ArrayList<>();
+				for (Homework hm : tmp.getHomework()) {
+					if (hm.getHomeworkDatetime().toLocalDate().isEqual(date)) {
+						HomeworkDTO homdto = new HomeworkDTO();
+						homdto.setHomeworkId(hm.getHomeworkId());
+						homdto.setHomeworkPage(hm.getHomeworkPage());
+						homdto.setHomeworkDatetime(hm.getHomeworkDatetime());
+						homdto.setCompletedPage(hm.getCompletedPage());
+						homdto.setComment(hm.getComment());
+						homdto.setCompleteDatetime(hm.getCompleteDatetime());
+						
+						homework.add(homdto);
 					}
-
-					homdto.setHomeworkPage(hm.getHomeworkPage());
-					homdto.setHomeworkDatetime(hm.getHomeworkDatetime());
-					homdto.setCompletedPage(hm.getCompletedPage());
-					homdto.setComment(hm.getComment());
-					homdto.setCompleteDatetime(hm.getCompleteDatetime());
-
-					homework.add(homdto);
+					subdto.setHomework(homework);
 				}
+				subject.add(subdto);
 			}
-			studto.setHomework(homework);
+			studto.setSubjects(subject);
 			return studto;
 		}
 		return null;
@@ -208,75 +206,68 @@ public class StudentService {
 //		}
 //		return attres;
 //	}
-	
+
 	// id로 해당 학생 전체 숙제 목록을 가져오는 메소드
 	public StudentDTO getHomeworkById(int id) {
-	    Optional<Student> res = stur.findById(id); // 학생 ID로 학생 정보를 검색
-	    StudentDTO studto = new StudentDTO(); // StudentDTO 객체 생성
-	    if (res.isPresent()) { // 학생이 존재하는 경우
-	        Student tmp = res.get(); // 학생 정보 가져오기
+		Optional<Student> res = stur.findById(id); // 학생 ID로 학생 정보를 검색
+		StudentDTO studto = new StudentDTO(); // StudentDTO 객체 생성
+		if (res.isPresent()) { // 학생이 존재하는 경우
+			Student tmp = res.get(); // 학생 정보 가져오기
 
-	        // 학생 ID와 이름 설정
-	        studto.setStudentId(tmp.getStudentId());
-	        studto.setStudentName(tmp.getStudentName());
-	        
-	        List<SubjectDTO> subjects = new ArrayList<>(); // 과목 목록 초기화
+			// 학생 ID와 이름 설정
+			studto.setStudentId(tmp.getStudentId());
+			studto.setStudentName(tmp.getStudentName());
 
-	        // 학생의 숙제 목록을 반복
-	        for (Homework hm : tmp.getHomework()) {
-	            // 현재 숙제가 속한 과목을 확인
-	            Subject subjectData = hm.getSubject(); // 숙제가 속한 과목 가져오기
-	            if (subjectData != null) { // 과목이 존재하는 경우
-	                // 과목 DTO 찾기 또는 생성
-	                SubjectDTO subjectDto = null;
-	                for (SubjectDTO existingSubject : subjects) {
-	                    if (existingSubject.getSubjectId().equals(subjectData.getSubjectId())) {
-	                        subjectDto = existingSubject; // 이미 존재하는 과목 DTO
-	                        break; // 과목을 찾았으니 반복 종료
-	                    }
-	                }
+			List<SubjectDTO> subjects = new ArrayList<>(); // 과목 목록 초기화
 
-<<<<<<< HEAD
-	                // 과목 DTO가 없으면 새로 생성
-	                if (subjectDto == null) {
-	                    subjectDto = new SubjectDTO();
-	                    subjectDto.setSubjectId(subjectData.getSubjectId());
-	                    subjectDto.setSubjectName(subjectData.getSubjectName());
-	                    subjectDto.setTeacher(null); // 교사 정보는 null로 설정
-	                    subjectDto.setHomework(new ArrayList<>()); // 숙제 목록 초기화
-	                    subjects.add(subjectDto); // 새로운 과목 추가
-	                }
-=======
-				// Subject 초기화
-				if (hm.getSubject() != null) {
-					SubjectDTO subject = new SubjectDTO();
-					subject.setSubjectId(hm.getSubject().getSubjectId());
-					homdto.setSubject(subject);
+			// 학생의 숙제 목록을 반복
+			for (Homework hm : tmp.getHomework()) {
+				// 현재 숙제가 속한 과목을 확인
+				Subject subjectData = hm.getSubject(); // 숙제가 속한 과목 가져오기
+				if (subjectData != null) { // 과목이 존재하는 경우
+					// 과목 DTO 찾기 또는 생성
+					SubjectDTO subjectDto = null;
+					for (SubjectDTO existingSubject : subjects) {
+						if (existingSubject.getSubjectId().equals(subjectData.getSubjectId())) {
+							subjectDto = existingSubject; // 이미 존재하는 과목 DTO
+							break; // 과목을 찾았으니 반복 종료
+						}
+					}
+					// 과목 DTO가 없으면 새로 생성
+					if (subjectDto == null) {
+						subjectDto = new SubjectDTO();
+						subjectDto.setSubjectId(subjectData.getSubjectId());
+						subjectDto.setSubjectName(subjectData.getSubjectName());
+						subjectDto.setHomework(new ArrayList<>()); // 숙제 목록 초기화
+//						subjects.add(subjectDto); // 새로운 과목 추가
+					}
+					// Subject 초기화
+					if (hm.getSubject() != null) {
+						SubjectDTO subject = new SubjectDTO();
+						subject.setSubjectId(hm.getSubject().getSubjectId());
+					}
+
+					// 숙제 DTO 생성
+					HomeworkDTO homdto = new HomeworkDTO();
+					homdto.setHomeworkId(hm.getHomeworkId()); // 숙제 ID 설정
+					homdto.setHomeworkPage(hm.getHomeworkPage()); // 숙제 페이지 수 설정
+					homdto.setHomeworkDatetime(hm.getHomeworkDatetime()); // 숙제 제출 날짜 설정
+					homdto.setCompletedPage(hm.getCompletedPage()); // 완료된 페이지 수 설정
+					homdto.setComment(hm.getComment()); // 코멘트 설정
+					homdto.setCompleteDatetime(hm.getCompleteDatetime()); // 숙제 완료 날짜 설정
+
+					// 과목 DTO에 숙제 추가
+					subjectDto.getHomework().add(homdto); // 과목 DTO에 숙제 추가
+					subjects.add(subjectDto);
 				}
->>>>>>> 0e372e891cdb198d83d3c0f2728a53df3bbfaaf2
+			}
 
-	                // 숙제 DTO 생성
-	                HomeworkDTO homdto = new HomeworkDTO();
-	                homdto.setHomeworkId(hm.getHomeworkId()); // 숙제 ID 설정
-	                homdto.setSubject(null); // 과목 정보는 null로 설정
-	                homdto.setStudent(null); // 학생 정보는 null로 설정
-	                homdto.setHomeworkPage(hm.getHomeworkPage()); // 숙제 페이지 수 설정
-	                homdto.setHomeworkDatetime(hm.getHomeworkDatetime()); // 숙제 제출 날짜 설정
-	                homdto.setCompletedPage(hm.getCompletedPage()); // 완료된 페이지 수 설정
-	                homdto.setComment(hm.getComment()); // 코멘트 설정
-	                homdto.setCompleteDatetime(hm.getCompleteDatetime()); // 숙제 완료 날짜 설정
-
-	                // 과목 DTO에 숙제 추가
-	                subjectDto.getHomework().add(homdto); // 과목 DTO에 숙제 추가
-	            }
-	        }
-
-	        studto.setSubjects(subjects); // 과목 목록 설정
-	        return studto; // 완성된 StudentDTO 반환
-	    }
-	    return null; // 학생 정보가 없는 경우 null 반환
+			studto.setSubjects(subjects); // 과목 목록 설정
+			return studto; // 완성된 StudentDTO 반환
+		}
+		return null; // 학생 정보가 없는 경우 null 반환
 	}
-	
+
 //	// id로 해당 학생 전체 숙제 목록을 가져오는 메소드
 //	public StudentDTO getHomeworkById(int id) {
 //	    Optional<Student> res = stur.findById(id); // 학생 ID로 학생 정보를 검색
@@ -343,7 +334,6 @@ public class StudentService {
 //	    return newSubjectDto; // 새로 생성한 과목 DTO 반환
 //	}
 
-	
 //	// id로 해당 학생 전체 숙제 목록
 //	public StudentDTO getHomeworkById(int id) {
 //		Optional<Student> res = stur.findById(id);
@@ -379,7 +369,6 @@ public class StudentService {
 //		}
 //		return null; // Optional<>.isPresent()가 false 일때
 //	}
-
 
 	// 개선안
 	public PageResponse<StudentDTO> getStudent2(int page, int size, LocalDate date, String teacherId,
@@ -476,7 +465,7 @@ public class StudentService {
 				subList.add(subdto);
 			}
 
-			studto.setSubject(subList);
+			studto.setSubjects(subList);
 			li.add(studto);
 		}
 

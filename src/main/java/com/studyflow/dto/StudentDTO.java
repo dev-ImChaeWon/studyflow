@@ -3,7 +3,7 @@ package com.studyflow.dto;
 import java.util.List;
 
 public class StudentDTO {
-	
+
     private Integer studentId; // 학생 ID
     private String studentName; // 학생 이름
     private List<HomeworkDTO> homework;
