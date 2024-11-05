@@ -49,27 +49,16 @@ public class StudentService {
 	HomeworkRepository homr;
 	AttendanceRepository attr;
 	SubjectRepository subr;
-<<<<<<< HEAD
-
-	@Autowired
-	public StudentService(TeacherRepository tear, StudentRepository stur, HomeworkRepository homr,
-			AttendanceRepository attr, SubjectRepository subr) {
-=======
 	StudentSubjectRepository stusubr;
 
 	@Autowired
 	public StudentService(TeacherRepository tear, StudentRepository stur, HomeworkRepository homr,
 			AttendanceRepository attr, SubjectRepository subr, StudentSubjectRepository stusubr) {
->>>>>>> 0e372e891cdb198d83d3c0f2728a53df3bbfaaf2
 		this.tear = tear;
 		this.stur = stur;
 		this.homr = homr;
 		this.attr = attr;
 		this.subr = subr;
-<<<<<<< HEAD
-=======
-		this.stusubr = stusubr;
->>>>>>> 0e372e891cdb198d83d3c0f2728a53df3bbfaaf2
 	}
 	
 
@@ -668,8 +657,4 @@ public class StudentService {
 
 		return studentPage;
 	}
-<<<<<<< HEAD
-=======
-
->>>>>>> 0e372e891cdb198d83d3c0f2728a53df3bbfaaf2
 }
