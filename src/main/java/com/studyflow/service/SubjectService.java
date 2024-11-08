@@ -35,4 +35,13 @@ public class SubjectService {
 		
 		return res;
 	}
+	
+	// 강좌 개설 시 과목 만드는 메소드
+	public void createSubject(SubjectDTO s) {
+		Subject subjectEntity = new Subject();
+		subjectEntity.setSubjectName(s.getSubjectName());
+		
+		subjectEntity.setTeacher(null);
+		
+	}
 }
