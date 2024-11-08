@@ -61,21 +61,21 @@ public class StudentService {
 	public StudentDTO getHomeworkByIdAndDate(int id, LocalDate date) {
 		Optional<Student> res = stur.findStudentByStudentIdAndHomeworkDatetime(id,
 				LocalDateTime.of(date, LocalTime.of(0, 0)), LocalDateTime.of(date.plusDays(1), LocalTime.of(0, 0)));
-		
+
 		StudentDTO studto = new StudentDTO();
-		
+
 		if (res.isPresent()) {
 			Student tmp = res.get();
 
 			studto.setStudentId(tmp.getStudentId());
 			studto.setStudentName(tmp.getStudentName());
-			
+
 			List<SubjectDTO> subject = new ArrayList<>();
 			for (Subject s : stusubr.findAllSubjectsByStudentId(tmp.getStudentId())) {
 				SubjectDTO subdto = new SubjectDTO();
 				subdto.setSubjectId(s.getSubjectId());
 				subdto.setSubjectName(s.getSubjectName());
-				
+
 				List<HomeworkDTO> homework = new ArrayList<>();
 				for (Homework hm : tmp.getHomework()) {
 					if (hm.getHomeworkDatetime().toLocalDate().isEqual(date)) {
@@ -86,7 +86,7 @@ public class StudentService {
 						homdto.setCompletedPage(hm.getCompletedPage());
 						homdto.setComment(hm.getComment());
 						homdto.setCompleteDatetime(hm.getCompleteDatetime());
-						
+
 						homework.add(homdto);
 					}
 					subdto.setHomework(homework);
