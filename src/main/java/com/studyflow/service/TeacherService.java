@@ -2,6 +2,7 @@ package com.studyflow.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -54,6 +55,71 @@ public class TeacherService {
 		
 		return res;
 		
+	}
+	
+	public TeacherDTO createTeacher(TeacherDTO t) {
+		Optional<Teacher> optT = tear.findById(t.getUserId());
+		if(optT.isPresent()) {
+			return null;
+		}
+		
+		Teacher teacherEntity = new Teacher();
+		teacherEntity.setUserId(t.getUserId());
+		teacherEntity.setUserName(t.getUserName());
+		teacherEntity.setUserPassword(t.getUserPassword());
+		teacherEntity.setUserRole(t.getUserRole());
+
+		Teacher resEntity = tear.save(teacherEntity);
+		TeacherDTO resDto = new TeacherDTO();
+		resDto.setUserId(resEntity.getUserId());
+		resDto.setUserName(resEntity.getUserName());
+		resDto.setUserRole(resEntity.getUserRole());
+		
+		return resDto;
+		
+		
+	}
+	
+	public TeacherDTO updateTeacher(String userId, TeacherDTO t) {
+		Optional<Teacher> optT = tear.findById(userId);
+		if(!optT.isPresent()) {
+			return null;
+		}
+		
+		Teacher teacherEntity = optT.get();
+		
+		teacherEntity.setUserId(userId);
+		
+		if(t.getUserName() != null) {
+			teacherEntity.setUserName(t.getUserName());			
+		}
+		
+		if(t.getUserPassword() != null) {
+			teacherEntity.setUserPassword(t.getUserPassword());			
+		}
+		
+		if(t.getUserRole() != null) {
+			teacherEntity.setUserRole(t.getUserRole());
+		}
+
+		Teacher resEntity = tear.save(teacherEntity);
+		TeacherDTO resDto = new TeacherDTO();
+		resDto.setUserId(resEntity.getUserId());
+		resDto.setUserName(resEntity.getUserName());
+		resDto.setUserRole(resEntity.getUserRole());
+		
+		return resDto;
+	}
+	
+	public boolean deleteTeacher(String userId) {
+		Optional<Teacher> optT = tear.findById(userId);
+		if(!optT.isPresent()) {
+			return false;
+		}
+		
+		tear.deleteById(userId);
+		
+		return true;
 	}
 	
 }
