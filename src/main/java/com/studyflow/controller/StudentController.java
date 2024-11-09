@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.studyflow.dto.AttendanceDTO;
@@ -57,6 +58,19 @@ public class StudentController {
 //		stus.getStudent2(page, size, date, teacherId, homeworkStatus, studentName);
 		return ResponseEntity.status(200).body(res);
 
+	}
+	
+	@GetMapping("/api/student-by-subject")
+	public ResponseEntity<List<StudentDTO>> getStudentBySubject(
+			@RequestParam(name = "subjectName", required = false) String subjectName) {
+		List<StudentDTO> res = stus.getStudentBySubject(subjectName);
+		
+		return ResponseEntity.status(200).body(res);
+	}
+	
+	@PostMapping("api/student")
+	public ResponseEntity<StudentDTO> createStudent(@RequestBody StudentDTO student){
+		return ResponseEntity.ok(stus.createStudent(student));
 	}
 
 }

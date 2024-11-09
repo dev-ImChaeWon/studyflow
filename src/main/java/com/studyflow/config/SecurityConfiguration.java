@@ -22,17 +22,17 @@ public class SecurityConfiguration {
 //		return http.build();
 //	}
 
+//	@Bean
+//	public SecurityFilterChain tmp(HttpSecurity http) throws Exception {
+//
+//		http.authorizeHttpRequests((authorize) -> authorize.requestMatchers("/api/student-homework/**")
+//				.permitAll().requestMatchers("/api/teacher").authenticated()).csrf((csrf) -> csrf.disable());
+//		return http.build();
+//
+//		// http보안 에서 Request관련 설정을 한다 그리고 csrf관련 설정을 한다.
+//	}
+
 	@Bean
-
-	public SecurityFilterChain tmp(HttpSecurity http) throws Exception {
-
-		http.authorizeHttpRequests((authorize) -> authorize.requestMatchers("/api/student-homework/**")
-				.permitAll().requestMatchers("/api/teacher").authenticated()).csrf((csrf) -> csrf.disable());
-		return http.build();
-
-		// http보안 에서 Request관련 설정을 한다 그리고 csrf관련 설정을 한다.
-	}
-
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.csrf().disable();
 		http.authorizeHttpRequests().anyRequest().permitAll();

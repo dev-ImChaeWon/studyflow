@@ -131,4 +131,8 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
 	        @Param("studentId") int studentId, 
 	        @Param("startDate") LocalDateTime startDate,
 			@Param("endDate") LocalDateTime endDate);
+	
+	@Query("SELECT s FROM Student s JOIN s.homework h WHERE h.subject.subjectId = :subjectId")
+    List<Student> findBySubjectId(@Param("subjectId") Integer subjectId);
+	
 }
