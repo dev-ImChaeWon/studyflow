@@ -8,5 +8,5 @@ import com.studyflow.entity.Teacher;
 
 public interface TeacherRepository extends JpaRepository<Teacher, String>{
 	
-	public List<Teacher> findAllByUserRole(String role);
+	public List<Teacher> findAllByUserRole(Character role);
 }

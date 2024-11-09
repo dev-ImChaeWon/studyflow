@@ -39,16 +39,17 @@ public class TeacherService {
 //		return res; // TeacherDTO 리스트 반환
 //	}
 
-	// 조교는 나오면 안 됨. 강사만 나올 수 있도록 코드 수정 ( findAllByUserRole(String role) )
+	// 조교는 나오면 안 됨. 강사만 나올 수 있도록 코드 수정 ( findAllByUserRole(Character role) )
 	// 학원에 등록된 user_role이 T인 선생님을 조회하는 API
 	public List<TeacherDTO> getTeacherT(){
-		List<Teacher> li = tear.findAllByUserRole("T");
+		List<Teacher> li = tear.findAllByUserRole('T');
 		List<TeacherDTO> res = new ArrayList<>();
 		
 		for(Teacher t: li) {
 			TeacherDTO teadto = new TeacherDTO();
 			teadto.setUserId(t.getUserId());
 			teadto.setUserName(t.getUserName());
+			teadto.setUserRole(t.getUserRole());
 			
 			res.add(teadto);
 		}
