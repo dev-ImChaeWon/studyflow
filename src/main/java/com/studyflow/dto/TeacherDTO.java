@@ -1,11 +1,22 @@
 package com.studyflow.dto;
 
+import java.util.List;
+
 public class TeacherDTO {
 
 	private String userId;
 	private String userPassword;
 	private Character userRole;
 	private String userName;
+	private List<SubjectDTO> subject;
+
+	public List<SubjectDTO> getSubject() {
+		return subject;
+	}
+
+	public void setSubject(List<SubjectDTO> subject) {
+		this.subject = subject;
+	}
 
 	public String getUserId() {
 		return userId;
