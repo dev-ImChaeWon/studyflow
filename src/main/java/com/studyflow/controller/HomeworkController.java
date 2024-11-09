@@ -37,16 +37,10 @@ public class HomeworkController {
 		this.homs = homs;
 	}
 	
-	// 숙제 수정 API (코멘트 수정)
-	@PostMapping("/api/homework-comment")
-	public String updateCommentHomework(@RequestBody HomeworkDTO homeworkDTO) {
-		return homs.updateCommentHomework(homeworkDTO);
-	}
-	
-	// 숙제 수정 API (완료된 페이지 수 수정)
-    @PostMapping("/api/homework-completedpage")
-    public Integer updatePageHomework(@RequestBody HomeworkDTO homeworkDTO) {
-        return homs.updateCompletedPageHomework(homeworkDTO);
+	// 학생 숙제 수정 API
+    @PostMapping("/api/homework-update")
+    public ResponseEntity<HomeworkDTO> updateHomework(@RequestBody HomeworkDTO homeworkDTO) {
+        return ResponseEntity.ok(homs.updateHomework(homeworkDTO));
     }
 	
 	// 학생 숙제 생성 API
