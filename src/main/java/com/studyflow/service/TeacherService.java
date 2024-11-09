@@ -1,24 +1,33 @@
 package com.studyflow.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import javax.crypto.spec.SecretKeySpec;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.studyflow.dto.TeacherDTO;
 import com.studyflow.entity.Teacher;
 import com.studyflow.repository.TeacherRepository;
 
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+
 @Service
 public class TeacherService {
 
 	TeacherRepository tear;
+	BCryptPasswordEncoder encoder;
 	
 	@Autowired
 	public TeacherService(TeacherRepository tear) {
 		this.tear = tear;
+		this.encoder = encoder;
 	}
 
 //	// 학원에 등록된 모든 선생님을 조회하는 API

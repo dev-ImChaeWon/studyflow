@@ -39,14 +39,14 @@ public class HomeworkController {
 	
 	// 숙제 수정 API (코멘트 수정)
 	@PostMapping("/api/homework-comment")
-	public HomeworkDTO updateCommentHomework(@RequestBody HomeworkDTO homeworkDTO) {
+	public String updateCommentHomework(@RequestBody HomeworkDTO homeworkDTO) {
 		return homs.updateCommentHomework(homeworkDTO);
 	}
 	
 	// 숙제 수정 API (완료된 페이지 수 수정)
     @PostMapping("/api/homework-completedpage")
-    public HomeworkDTO updatePageHomework(@RequestBody HomeworkDTO homeworkDTO) {
-        return homs.updateCompletedHomework(homeworkDTO);
+    public Integer updatePageHomework(@RequestBody HomeworkDTO homeworkDTO) {
+        return homs.updateCompletedPageHomework(homeworkDTO);
     }
 	
 	// 학생 숙제 생성 API

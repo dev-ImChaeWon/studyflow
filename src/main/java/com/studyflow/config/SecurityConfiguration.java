@@ -14,8 +14,10 @@ public class SecurityConfiguration {
 	@Bean
 	public SecurityFilterChain tmp(HttpSecurity http) throws Exception {
 
-		http.authorizeHttpRequests((authorize) -> authorize.requestMatchers("/api/student-homework/**").permitAll()
-				.requestMatchers("/api/teacher").permitAll().requestMatchers("/api/homework-comment").permitAll().anyRequest()
+		http.authorizeHttpRequests((authorize) -> authorize.requestMatchers("/api/student-homework/**")
+				.permitAll().requestMatchers("/api/teacher")
+				.permitAll().requestMatchers("/api/homework-comment")
+				.permitAll().requestMatchers("/api/homework-completedpage")
 				.authenticated()).csrf((csrf) -> csrf.disable());
 
 		// http보안 에서 Request관련 설정을 한다 그리고 csrf관련 설정을 한다.
