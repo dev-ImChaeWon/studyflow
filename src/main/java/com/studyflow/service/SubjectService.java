@@ -44,4 +44,21 @@ public class SubjectService {
 		subjectEntity.setTeacher(null);
 		
 	}
+	
+	// 교사 id로 과목 가져오는 메소드
+	public List<SubjectDTO> getSubjectByTeacherId(String userId){
+		List<Subject> li = subr.findAllByTeacher_UserId(userId);
+		List<SubjectDTO> res = new ArrayList<>();
+		
+		for(Subject s : li) {
+			SubjectDTO subdto = new SubjectDTO();
+			subdto.setSubjectId(s.getSubjectId());
+			subdto.setSubjectName(s.getSubjectName());
+			
+			res.add(subdto);
+		}
+		
+		return res;
+	}
+	
 }

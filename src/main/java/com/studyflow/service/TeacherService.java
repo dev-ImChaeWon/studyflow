@@ -7,7 +7,9 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.studyflow.dto.SubjectDTO;
 import com.studyflow.dto.TeacherDTO;
+import com.studyflow.entity.Subject;
 import com.studyflow.entity.Teacher;
 import com.studyflow.repository.TeacherRepository;
 
@@ -51,6 +53,18 @@ public class TeacherService {
 			teadto.setUserName(t.getUserName());
 			teadto.setUserRole(t.getUserRole());
 			
+			List<SubjectDTO> subjectList = new ArrayList<>();
+			
+			for(Subject s : t.getSubject()) {		
+				if((s.getTeacher().getUserId()).equals(t.getUserId())) {					
+					SubjectDTO subdto = new SubjectDTO();
+					subdto.setSubjectId(s.getSubjectId());
+					subdto.setSubjectName(s.getSubjectName());
+					
+					subjectList.add(subdto);
+				}
+			}			
+			teadto.setSubject(subjectList);
 			res.add(teadto);
 		}
 		

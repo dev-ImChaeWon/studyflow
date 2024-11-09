@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.studyflow.dto.HomeworkDTO;
 import com.studyflow.dto.StudentDTO;
@@ -23,7 +24,8 @@ import com.studyflow.entity.Subject;
 import com.studyflow.service.HomeworkService;
 import com.studyflow.service.StudentService;
 
-@Controller
+//@Controller
+@RestController
 public class HomeworkController {
 
 	StudentService stus;
@@ -35,7 +37,14 @@ public class HomeworkController {
 		this.homs = homs;
 	}
 	
+	// 숙제 수정 API (코멘트 수정)
+	@PostMapping("/api/homework-comment")
+	public HomeworkDTO updateCommentHomework(@RequestBody HomeworkDTO homeworkDTO) {
+		return homs.updateCommentHomework(homeworkDTO);
+	}
+	
 	// 숙제 수정 API (완료된 페이지 수 수정)
+
     @PostMapping("/api/homework-update")
     public ResponseEntity<HomeworkDTO> updateHomework(@RequestBody HomeworkDTO homeworkDTO) {
         return ResponseEntity.ok(homs.updateHomework(homeworkDTO));
