@@ -37,8 +37,8 @@ public class HomeworkController {
 	
 	// 숙제 수정 API (완료된 페이지 수 수정)
     @PostMapping("/api/homework-update")
-    public HomeworkDTO updateHomework(@RequestBody HomeworkDTO homeworkDTO) {
-        return homs.updateHomework(homeworkDTO);
+    public ResponseEntity<HomeworkDTO> updateHomework(@RequestBody HomeworkDTO homeworkDTO) {
+        return ResponseEntity.ok(homs.updateHomework(homeworkDTO));
     }
 	
 	// 학생 숙제 생성 API

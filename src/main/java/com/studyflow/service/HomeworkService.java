@@ -70,7 +70,22 @@ public class HomeworkService {
         Homework homework = homeworkOptional.get();
         
         // 2. 완료된 페이지 수 업데이트
-        homework.setCompletedPage(completedPage);
+        if(completedPage != null) {
+        	homework.setCompletedPage(completedPage);        	
+        }
+        
+        // 2. 숙제페이지를 업데이트 하려는 경우
+        if(homeworkDTO.getHomeworkPage() != null) {
+        	homework.setHomeworkPage(homeworkDTO.getHomeworkPage());
+        }
+        
+        // 2. comment 업데이트 하려는 경우
+        if(homeworkDTO.getComment() != null && !homeworkDTO.getComment().equals("")) {
+        	homework.setComment(homeworkDTO.getComment());
+        }
+        
+        homework.setCompleteDatetime(LocalDateTime.now());
+        
         
         // 3. 숙제 저장 (업데이트)
         Homework updatedHomework = homr.save(homework);

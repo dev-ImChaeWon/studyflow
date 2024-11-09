@@ -59,9 +59,9 @@ public class StudentService {
 
 	// id와 date로 해당 날짜와 해당 학생 숙제 정보 조회
 	public StudentDTO getHomeworkByIdAndDate(int id, LocalDate date) {
-		Optional<Student> res = stur.findStudentByStudentIdAndHomeworkDatetime(id,
-				LocalDateTime.of(date, LocalTime.of(0, 0)), LocalDateTime.of(date.plusDays(1), LocalTime.of(0, 0)));
-
+		Optional<Student> res  = stur.findById(id);
+		
+		
 		StudentDTO studto = new StudentDTO();
 
 		if (res.isPresent()) {
@@ -78,7 +78,7 @@ public class StudentService {
 
 				List<HomeworkDTO> homework = new ArrayList<>();
 				for (Homework hm : tmp.getHomework()) {
-					if (hm.getHomeworkDatetime().toLocalDate().isEqual(date)) {
+					if (hm.getHomeworkDatetime().toLocalDate().isEqual(date) && hm.getSubject().getSubjectId().equals(s.getSubjectId())) {
 						HomeworkDTO homdto = new HomeworkDTO();
 						homdto.setHomeworkId(hm.getHomeworkId());
 						homdto.setHomeworkPage(hm.getHomeworkPage());
@@ -96,6 +96,8 @@ public class StudentService {
 			studto.setSubjects(subject);
 			return studto;
 		}
+		
+		System.out.println("확인");
 		return null;
 	}
 
