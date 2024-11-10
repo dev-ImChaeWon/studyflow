@@ -15,6 +15,7 @@ import com.studyflow.dto.SubjectDTO;
 import com.studyflow.dto.TeacherDTO;
 import com.studyflow.entity.Subject;
 import com.studyflow.entity.Teacher;
+import com.studyflow.repository.SubjectRepository;
 import com.studyflow.repository.TeacherRepository;
 
 import io.jsonwebtoken.Jwts;
@@ -24,11 +25,13 @@ import io.jsonwebtoken.SignatureAlgorithm;
 public class TeacherService {
 
 	TeacherRepository tear;
+	SubjectRepository subr;
 	BCryptPasswordEncoder encoder;
 	
 	@Autowired
-	public TeacherService(TeacherRepository tear) {
+	public TeacherService(TeacherRepository tear, SubjectRepository subr) {
 		this.tear = tear;
+		this.subr = subr;
 		this.encoder = encoder;
 	}
 
@@ -126,6 +129,20 @@ public class TeacherService {
 			teacherEntity.setUserRole(t.getUserRole());
 		}
 
+		if(t.getSubject() != null) {
+	        List<Subject> subli = new ArrayList<>();
+	        for(SubjectDTO subjectDTO : t.getSubject()) {
+	            Optional<Subject> existingSubject = subr.findById(subjectDTO.getSubjectId());
+	            if (existingSubject.isPresent()) {
+	                Subject subject = existingSubject.get();
+	                subject.setSubjectName(subjectDTO.getSubjectName());
+	                subject.setTeacher(teacherEntity);  
+	                subli.add(subject);
+	            }
+	        }
+	        teacherEntity.setSubject(subli);
+	    }
+		
 		Teacher resEntity = tear.save(teacherEntity);
 		TeacherDTO resDto = new TeacherDTO();
 		resDto.setUserId(resEntity.getUserId());

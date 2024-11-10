@@ -21,7 +21,7 @@ public class Subject {
 	private String subjectName;
 
 	@ManyToOne
-	@JoinColumn(name = "teacher_id")
+	@JoinColumn(name = "teacher_id", nullable = false)
 	private Teacher teacher;
 
 	public Integer getSubjectId() {
