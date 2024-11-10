@@ -57,11 +57,11 @@ public class SecurityConfiguration {
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http.cors().and().csrf().disable();
+		http.csrf().disable();
 		// JWT 인증 필터 등록
-        http.addFilterBefore(new JwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+//        http.addFilterBefore(new JwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
-		http.authorizeHttpRequests().requestMatchers("/api/auth/signup", "/api/auth/signin").permitAll().requestMatchers("/api/**").authenticated();
+		http.authorizeHttpRequests().requestMatchers("/api/**").permitAll();
 //	        HttpSecurity.csrf().disable();
 
 		return http.build();
