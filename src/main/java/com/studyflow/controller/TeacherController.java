@@ -27,6 +27,7 @@ public class TeacherController {
 		this.teas = teas;
 	}
 	
+	
 	// 학원에 등록된 user_role이 T인 선생님을 조회하는 API
 	@GetMapping("/api/teacher")
 	public ResponseEntity<List<TeacherDTO>> getTeacherT() {	// List<TeacherDTO> 타입으로 

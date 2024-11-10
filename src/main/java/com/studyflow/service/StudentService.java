@@ -10,6 +10,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -59,9 +60,8 @@ public class StudentService {
 
 	// id와 date로 해당 날짜와 해당 학생 숙제 정보 조회
 	public StudentDTO getHomeworkByIdAndDate(int id, LocalDate date) {
-		Optional<Student> res  = stur.findById(id);
-		
-		
+		Optional<Student> res = stur.findById(id);
+
 		StudentDTO studto = new StudentDTO();
 
 		if (res.isPresent()) {
@@ -78,7 +78,8 @@ public class StudentService {
 
 				List<HomeworkDTO> homework = new ArrayList<>();
 				for (Homework hm : tmp.getHomework()) {
-					if (hm.getHomeworkDatetime().toLocalDate().isEqual(date) && hm.getSubject().getSubjectId().equals(s.getSubjectId())) {
+					if (hm.getHomeworkDatetime().toLocalDate().isEqual(date)
+							&& hm.getSubject().getSubjectId().equals(s.getSubjectId())) {
 						HomeworkDTO homdto = new HomeworkDTO();
 						homdto.setHomeworkId(hm.getHomeworkId());
 						homdto.setHomeworkPage(hm.getHomeworkPage());
@@ -96,7 +97,7 @@ public class StudentService {
 			studto.setSubjects(subject);
 			return studto;
 		}
-		
+
 		System.out.println("확인");
 		return null;
 	}
@@ -482,6 +483,7 @@ public class StudentService {
 		return studentPage;
 	}
 
+	// 선생님 이름, 날짜, 숙제상태, 학생 이름으로 학생 가져오는 메소드 (개선안으로 대체됨)
 	public PageResponse<StudentDTO> getStudent(int page, int size, Date date, String teacherName, String homeworkStatus,
 			String studentName) {
 		String findByTeacherPattern = (teacherName != null && !teacherName.trim().isEmpty() && teacherName != "")
@@ -647,5 +649,31 @@ public class StudentService {
 //		studentPage.setDate();
 
 		return studentPage;
+	}
+
+	public StudentDTO createStudent(StudentDTO s) {
+		Student studentEntity = new Student();
+		studentEntity.setStudentName(s.getStudentName());
+
+		Student resEntity = stur.save(studentEntity);
+		StudentDTO resdto = new StudentDTO();
+		resdto.setStudentId(resEntity.getStudentId());
+		resdto.setStudentName(resEntity.getStudentName());
+
+		return resdto;
+	}
+
+	public List<StudentDTO> getStudentBySubject(String subjectName) {
+		Subject subject = subr.findBySubjectName(subjectName)
+				.orElseThrow(() -> new RuntimeException("Subject not found"));
+
+		List<Student> students = stur.findBySubjectId(subject.getSubjectId());
+
+		return students.stream().map(student -> {
+			StudentDTO studentDTO = new StudentDTO();
+			studentDTO.setStudentId(student.getStudentId());
+			studentDTO.setStudentName(student.getStudentName());
+			return studentDTO;
+		}).collect(Collectors.toList());
 	}
 }

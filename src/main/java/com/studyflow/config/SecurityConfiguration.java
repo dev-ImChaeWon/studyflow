@@ -45,6 +45,16 @@ public class SecurityConfiguration {
     }
     
 
+//	@Bean
+//	public SecurityFilterChain tmp(HttpSecurity http) throws Exception {
+//
+//		http.authorizeHttpRequests((authorize) -> authorize.requestMatchers("/api/student-homework/**")
+//				.permitAll().requestMatchers("/api/teacher").authenticated()).csrf((csrf) -> csrf.disable());
+//		return http.build();
+//
+//		// http보안 에서 Request관련 설정을 한다 그리고 csrf관련 설정을 한다.
+//	}
+
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.cors().and().csrf().disable();
@@ -53,6 +63,7 @@ public class SecurityConfiguration {
 
 		http.authorizeHttpRequests().requestMatchers("/api/auth/signup", "/api/auth/signin").permitAll().requestMatchers("/api/**").authenticated();
 //	        HttpSecurity.csrf().disable();
+
 		return http.build();
 	}
 }
