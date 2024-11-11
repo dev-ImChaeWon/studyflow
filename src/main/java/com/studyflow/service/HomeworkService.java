@@ -70,15 +70,19 @@ public class HomeworkService {
         }
 		
         Homework homework = homeworkOptional.get();
+        
         if(comment != null && !comment.equals("")) {
         	homework.setComment(comment);
         }
+        
         if(completedPage != null) {
         	homework.setCompletedPage(completedPage);
         }
+        
         if(homeworkPage != null) {
         	homework.setHomeworkPage(homeworkPage);
         }
+        
         homework.setCompleteDatetime(LocalDateTime.now());
         
         // 3. 숙제 저장 (업데이트)
@@ -228,29 +232,4 @@ public class HomeworkService {
         return createdHomeworkDTO;
  
 	}
-	
-	
-//	// 학생 숙제 생성
-//	@Transactional
-//	public HomeworkDTO createHomework(HomeworkDTO homeworkDTO) {
-//		Integer homeworkId = homeworkDTO.getHomeworkId();
-//		
-//		// 숙제 정보 조회
-//		Optional<Homework> optionalHomework = homr.findById(homeworkId);
-//		Homework homework;
-//		
-//		if (!optionalHomework.isPresent()) {
-//			// 만약 optionalHomework가 비어 있으면 (즉, 해당 homeworkId의 숙제가 없으면)
-//		    // 새로운 숙제를 생성
-//			homework = new Homework();
-//			homework.setHomeworkId(homeworkId);
-//			homework.getStudent().setStudentId(homeworkId);
-//			homework.getSubject().setSubjectId(homeworkId);
-//			
-//		}
-//		
-//		return null;
-//		
-//	}
-	
 }

@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -17,19 +18,39 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.studyflow.dto.AttendanceDTO;
 import com.studyflow.dto.StudentDTO;
+import com.studyflow.dto.TestScoreDTO;
 import com.studyflow.response.PageResponse;
 import com.studyflow.service.StudentService;
+import com.studyflow.service.TestScoreService;
 
 @Controller
 @CrossOrigin(origins = "http://localhost:8088")
 public class StudentController {
 
 	StudentService stus;
+	TestScoreService tests;
+
 
 	@Autowired
-	public StudentController(StudentService stus) {
+	public StudentController(StudentService stus, TestScoreService tests) {
 		this.stus = stus;
+		this.tests = tests;
 	}
+	
+	// 테스트 점수 생성 API
+    @PostMapping("/api/test-create")
+    public ResponseEntity<TestScoreDTO> createTestScore(@RequestBody TestScoreDTO testScoreDTO) {
+        try {
+            // 서비스 계층을 호출하여 점수 생성
+            TestScoreDTO createdTestScore = tests.createTestScore(testScoreDTO);
+
+            // 성공적으로 생성된 경우 201 Created 응답
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdTestScore);
+        } catch (Exception e) {
+            // 기타 예기치 않은 예외 발생 시 500 Internal Server Error 응답
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
 
 	// 학생 목록 조회 API
 //	public ResponseEntity<List<StudentDTO>> getAllStudent() { // List<StudentDTO> 타입

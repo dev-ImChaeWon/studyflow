@@ -5,8 +5,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import javax.crypto.spec.SecretKeySpec;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,9 +15,6 @@ import com.studyflow.entity.Subject;
 import com.studyflow.entity.Teacher;
 import com.studyflow.repository.TeacherRepository;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-
 @Service
 public class TeacherService {
 
@@ -29,7 +24,6 @@ public class TeacherService {
 	@Autowired
 	public TeacherService(TeacherRepository tear) {
 		this.tear = tear;
-		this.encoder = encoder;
 	}
 
 //	// 학원에 등록된 모든 선생님을 조회하는 API
@@ -81,6 +75,7 @@ public class TeacherService {
 		
 	}
 	
+	// 선생님 추가 메서드
 	public TeacherDTO createTeacher(TeacherDTO t) {
 		Optional<Teacher> optT = tear.findById(t.getUserId());
 		if(optT.isPresent()) {
@@ -100,10 +95,9 @@ public class TeacherService {
 		resDto.setUserRole(resEntity.getUserRole());
 		
 		return resDto;
-		
-		
 	}
 	
+	// 선생님 수정 메서드
 	public TeacherDTO updateTeacher(String userId, TeacherDTO t) {
 		Optional<Teacher> optT = tear.findById(userId);
 		if(!optT.isPresent()) {

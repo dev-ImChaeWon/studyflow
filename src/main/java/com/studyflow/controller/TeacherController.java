@@ -36,10 +36,12 @@ public class TeacherController {
 		return ResponseEntity.status(200).body(res);
 	}
 	
+	// 선생님 추가 API
 	@PostMapping("/api/teacher")
 	public ResponseEntity<TeacherDTO> createTeacher(@RequestBody TeacherDTO teacher){
 		return ResponseEntity.ok(teas.createTeacher(teacher));
 	}
+	
 	
 	@PutMapping("/api/teacher/{userId}")
 	public ResponseEntity<TeacherDTO> updateTeacher(@PathVariable(name="userId") String userId,  @RequestBody TeacherDTO teacher){

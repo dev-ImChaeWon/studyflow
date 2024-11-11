@@ -9,7 +9,8 @@ public class StudentDTO {
     private List<HomeworkDTO> homework;
     private List<SubjectDTO> subjects; // 과목 목록
 
-    public Integer getStudentId() {
+
+	public Integer getStudentId() {
         return studentId;
     }
 

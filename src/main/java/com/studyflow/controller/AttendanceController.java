@@ -19,8 +19,6 @@ import com.studyflow.entity.Attendance;
 import com.studyflow.entity.AttendanceId;
 import com.studyflow.service.AttendanceService;
 
-import jakarta.transaction.Transactional;
-
 @Controller
 @CrossOrigin(origins = "http://localhost:8088")
 public class AttendanceController {
@@ -38,6 +36,7 @@ public class AttendanceController {
 //        
 //        return ResponseEntity.status(201).body(atts.updateAttendance(attendanceDTO));
 //    }
+	
 	
 	// 출결 수정(생성) API
 	@PostMapping("/api/attendance-update")

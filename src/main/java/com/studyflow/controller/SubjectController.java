@@ -31,6 +31,7 @@ public class SubjectController {
 		return ResponseEntity.status(200).body(res);
 	}
 	
+	// 교사 id로 과목 가져오는 API
 	@GetMapping("/api/teacher-subject/{userId}")
 	public ResponseEntity<List<SubjectDTO>> getSubject(@PathVariable("userId") String userId){
 		List<SubjectDTO> res = subs.getSubjectByTeacherId(userId);
