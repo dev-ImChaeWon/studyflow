@@ -13,17 +13,24 @@ import com.studyflow.dto.SubjectDTO;
 import com.studyflow.dto.TeacherDTO;
 import com.studyflow.entity.Subject;
 import com.studyflow.entity.Teacher;
+import com.studyflow.repository.SubjectRepository;
 import com.studyflow.repository.TeacherRepository;
 
 @Service
 public class TeacherService {
 
 	TeacherRepository tear;
+	SubjectRepository subr;
 	BCryptPasswordEncoder encoder;
 	
 	@Autowired
-	public TeacherService(TeacherRepository tear) {
+	public TeacherService(TeacherRepository tear, SubjectRepository subr) {
 		this.tear = tear;
+<<<<<<< HEAD
+=======
+		this.subr = subr;
+		this.encoder = encoder;
+>>>>>>> 4ec42036b2f708c36d0529bc23a5239824d2f54e
 	}
 
 //	// 학원에 등록된 모든 선생님을 조회하는 API
@@ -120,6 +127,20 @@ public class TeacherService {
 			teacherEntity.setUserRole(t.getUserRole());
 		}
 
+		if(t.getSubject() != null) {
+	        List<Subject> subli = new ArrayList<>();
+	        for(SubjectDTO subjectDTO : t.getSubject()) {
+	            Optional<Subject> existingSubject = subr.findById(subjectDTO.getSubjectId());
+	            if (existingSubject.isPresent()) {
+	                Subject subject = existingSubject.get();
+	                subject.setSubjectName(subjectDTO.getSubjectName());
+	                subject.setTeacher(teacherEntity);  
+	                subli.add(subject);
+	            }
+	        }
+	        teacherEntity.setSubject(subli);
+	    }
+		
 		Teacher resEntity = tear.save(teacherEntity);
 		TeacherDTO resDto = new TeacherDTO();
 		resDto.setUserId(resEntity.getUserId());

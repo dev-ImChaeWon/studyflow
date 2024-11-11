@@ -21,10 +21,12 @@ import org.springframework.stereotype.Service;
 import com.studyflow.dto.AttendanceDTO;
 import com.studyflow.dto.HomeworkDTO;
 import com.studyflow.dto.StudentDTO;
+import com.studyflow.dto.StudentSubjectDTO;
 import com.studyflow.dto.SubjectDTO;
 import com.studyflow.entity.Attendance;
 import com.studyflow.entity.Homework;
 import com.studyflow.entity.Student;
+import com.studyflow.entity.StudentSubject;
 import com.studyflow.entity.Subject;
 import com.studyflow.repository.AttendanceRepository;
 import com.studyflow.repository.HomeworkRepository;
@@ -663,17 +665,55 @@ public class StudentService {
 		return resdto;
 	}
 
+	// 과목으로 학생 리스트 가져오기
 	public List<StudentDTO> getStudentBySubject(String subjectName) {
-		Subject subject = subr.findBySubjectName(subjectName)
-				.orElseThrow(() -> new RuntimeException("Subject not found"));
+		Optional<Subject> isSubject = subr.findBySubjectName(subjectName);
 
-		List<Student> students = stur.findBySubjectId(subject.getSubjectId());
+		if (isSubject.isPresent()) {
+			Subject subject = subr.findBySubjectName(subjectName).orElseThrow();
+			List<Student> students = stur.findBySubjectId(subject.getSubjectId());
 
-		return students.stream().map(student -> {
-			StudentDTO studentDTO = new StudentDTO();
-			studentDTO.setStudentId(student.getStudentId());
-			studentDTO.setStudentName(student.getStudentName());
-			return studentDTO;
-		}).collect(Collectors.toList());
+			return students.stream().map(student -> {
+				StudentDTO res = new StudentDTO();
+				res.setStudentId(student.getStudentId());
+				res.setStudentName(student.getStudentName());
+				List<Subject> subli = stusubr.findAllSubjectsByStudentId(student.getStudentId());
+				
+				List<SubjectDTO> tmpSubli = new ArrayList<>(); 
+				for(Subject subj : subli) {
+					SubjectDTO subdto = new SubjectDTO();
+					subdto.setSubjectId(subj.getSubjectId());
+					subdto.setSubjectName(subj.getSubjectName());
+					
+					tmpSubli.add(subdto);
+				}
+				res.setSubjects(tmpSubli);
+				return res;
+			}).collect(Collectors.toList());
+		} else {
+			List<Student> students =  stur.findAll();
+			List<StudentDTO> res = new ArrayList<>();
+			
+			for(Student s : students) {				
+				StudentDTO studto = new StudentDTO();
+				studto.setStudentId(s.getStudentId());
+				studto.setStudentName(s.getStudentName());
+				
+				List<Subject> subli = stusubr.findAllSubjectsByStudentId(s.getStudentId());
+				List<SubjectDTO> tmpSubli = new ArrayList<>(); 
+				for(Subject subject : subli) {
+					SubjectDTO subdto = new SubjectDTO();
+					subdto.setSubjectId(subject.getSubjectId());
+					subdto.setSubjectName(subject.getSubjectName());
+					
+					tmpSubli.add(subdto);
+				}
+				
+				studto.setSubjects(tmpSubli);
+				res.add(studto);
+			}
+			return res;
+		}
+
 	}
 }

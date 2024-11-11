@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.studyflow.dto.SubjectDTO;
 import com.studyflow.service.SubjectService;
@@ -15,27 +16,36 @@ import com.studyflow.service.SubjectService;
 @Controller
 @CrossOrigin(origins = "http://localhost:8088")
 public class SubjectController {
-	
+
 	SubjectService subs;
-	
+
 	@Autowired
 	public SubjectController(SubjectService subs) {
 		this.subs = subs;
 	}
-	
+
 	// 과목 이름 리스트 가져오는 API
 	@GetMapping("/api/subject")
 	public ResponseEntity<List<SubjectDTO>> getSubjectName() {
 		List<SubjectDTO> res = subs.getSubjectName();
-		
+
 		return ResponseEntity.status(200).body(res);
 	}
+<<<<<<< HEAD
 	
 	// 교사 id로 과목 가져오는 API
+=======
+
+>>>>>>> 4ec42036b2f708c36d0529bc23a5239824d2f54e
 	@GetMapping("/api/teacher-subject/{userId}")
-	public ResponseEntity<List<SubjectDTO>> getSubject(@PathVariable("userId") String userId){
+	public ResponseEntity<List<SubjectDTO>> getSubject(@PathVariable("userId") String userId) {
 		List<SubjectDTO> res = subs.getSubjectByTeacherId(userId);
-		
+
 		return ResponseEntity.status(200).body(res);
+	}
+
+	@GetMapping("/api/student-subject")
+	public List<SubjectDTO> getSubjectsByStudentId(@RequestParam Integer studentId) {
+		return subs.getSubjectsByStudentId(studentId);
 	}
 }
