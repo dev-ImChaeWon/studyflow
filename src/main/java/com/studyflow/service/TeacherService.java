@@ -26,11 +26,8 @@ public class TeacherService {
 	@Autowired
 	public TeacherService(TeacherRepository tear, SubjectRepository subr) {
 		this.tear = tear;
-<<<<<<< HEAD
-=======
 		this.subr = subr;
 		this.encoder = encoder;
->>>>>>> 4ec42036b2f708c36d0529bc23a5239824d2f54e
 	}
 
 //	// 학원에 등록된 모든 선생님을 조회하는 API
@@ -127,8 +124,8 @@ public class TeacherService {
 			teacherEntity.setUserRole(t.getUserRole());
 		}
 
+		List<Subject> subli = new ArrayList<>();
 		if(t.getSubject() != null) {
-	        List<Subject> subli = new ArrayList<>();
 	        for(SubjectDTO subjectDTO : t.getSubject()) {
 	            Optional<Subject> existingSubject = subr.findById(subjectDTO.getSubjectId());
 	            if (existingSubject.isPresent()) {
@@ -142,6 +139,19 @@ public class TeacherService {
 	    }
 		
 		Teacher resEntity = tear.save(teacherEntity);
+		
+		// SubjectService의 updateSubject로 save
+		SubjectService ssMethod = new SubjectService(subr);
+		SubjectDTO subdto = new SubjectDTO();
+		TeacherDTO teadto = new TeacherDTO();
+		for(Subject s : subli) {			
+			subdto.setSubjectName(s.getSubjectName());
+			teadto.setUserId(resEntity.getUserId());
+			subdto.setTeacher(teadto);
+			ssMethod.updateSubject(s.getSubjectId(), subdto);
+		}
+		
+		// 저장된 Teacher 리턴
 		TeacherDTO resDto = new TeacherDTO();
 		resDto.setUserId(resEntity.getUserId());
 		resDto.setUserName(resEntity.getUserName());

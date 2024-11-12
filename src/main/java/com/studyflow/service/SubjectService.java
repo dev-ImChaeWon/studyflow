@@ -2,6 +2,7 @@ package com.studyflow.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.studyflow.dto.SubjectDTO;
 import com.studyflow.entity.Subject;
+import com.studyflow.entity.Teacher;
 import com.studyflow.repository.SubjectRepository;
 
 import jakarta.transaction.Transactional;
@@ -22,7 +24,37 @@ public class SubjectService {
 	public SubjectService(SubjectRepository subr) {
 		this.subr = subr;
 	}
+	
+	// 과목 수정 메소드
+	public SubjectDTO updateSubject(int subjectId, SubjectDTO s) { 
+		Optional<Subject> optS = subr.findById(subjectId);
+		if(!optS.isPresent()) {
+			return null;
+		} 
+		
+		Subject subjectEntity = optS.get();
+		
+		subjectEntity.setSubjectId(subjectId);
+		
+		if(s.getSubjectName() != null) {
+			subjectEntity.setSubjectName(s.getSubjectName());
+		}
+		
+		if(s.getTeacher().getUserId() != null) {
+			Teacher teacherId = new Teacher();
+			teacherId.setUserId(s.getTeacher().getUserId());
+			subjectEntity.setTeacher(teacherId);
+		}
+		
+		Subject subEntity = subr.save(subjectEntity);
+		SubjectDTO subdto = new SubjectDTO();
+		subdto.setSubjectId(subEntity.getSubjectId());
+		subdto.setSubjectName(subEntity.getSubjectName());
+		
+		return subdto;
+	}
 
+	// 전체 과목 리스트 가져오는 메소드
 	@Transactional
 	public List<SubjectDTO> getSubjectName() {
 		List<Subject> li = subr.findAll();

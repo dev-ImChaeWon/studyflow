@@ -1,5 +1,6 @@
 package com.studyflow.service;
 
+import java.util.Date;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,10 @@ public class TestScoreService {
         // TestScoreDTO에서 TestScore 엔티티로 변환
         TestScore testScoreEntity = new TestScore();
         testScoreEntity.setScore(testScoreDTO.getScore());
-        testScoreEntity.setWeeklyTestDate(testScoreDTO.getWeeklyTestDate());
+//        testScoreEntity.setWeeklyTestDate(testScoreDTO.getWeeklyTestDate());
+        // 날짜는 Date 타입의 현재 시각으로 설정
+        Date today = new Date();
+        testScoreEntity.setWeeklyTestDate(today);
 
         // 학생과 과목을 객체로 설정
         StudentDTO studentDTO = testScoreDTO.getStudent();
@@ -43,22 +47,22 @@ public class TestScoreService {
         if (studentDTO != null && subjectDTO != null) {
             Student student = new Student();
             student.setStudentId(studentDTO.getStudentId());
-            student.setStudentName(studentDTO.getStudentName());
+//            student.setStudentName(studentDTO.getStudentName());
 
             Subject subject = new Subject();
             subject.setSubjectId(subjectDTO.getSubjectId());
-            subject.setSubjectName(subjectDTO.getSubjectName());
+//            subject.setSubjectName(subjectDTO.getSubjectName());
 
             testScoreEntity.setStudent(student);
             testScoreEntity.setSubject(subject);
         }
 
         // 중복된 ID가 있는지 확인 (ID를 기준으로 찾기)
-        Optional<TestScore> existingTestScore = testr.findById(testScoreDTO.getId());
-        if (existingTestScore.isPresent()) {
-//            throw new TestScoreException("TestScore with the provided ID already exists.");
-        	return null;
-        }
+//        Optional<TestScore> existingTestScore = testr.findById(testScoreDTO.getId());
+//        if (existingTestScore.isPresent()) {
+////            throw new TestScoreException("TestScore with the provided ID already exists.");
+//        	return null;
+//        }
 
         // 데이터베이스에 저장
         TestScore savedTestScore = testr.save(testScoreEntity);
