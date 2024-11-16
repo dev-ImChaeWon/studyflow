@@ -1,5 +1,6 @@
 package com.studyflow.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -16,8 +17,8 @@ public class Teacher {
 	private Character userRole;
 	private String userName;
 	
-	@OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Subject> subject;
+	@OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL)
+	private List<Subject> subject = new ArrayList<>();
 
 	public List<Subject> getSubject() {
 		return subject;

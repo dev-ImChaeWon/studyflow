@@ -10,6 +10,8 @@ import org.springframework.data.repository.query.Param;
 
 import com.studyflow.entity.Homework;
 
+import jakarta.transaction.Transactional;
+
 public interface HomeworkRepository extends JpaRepository<Homework, Integer> {
 
 	// 날짜 필터 테스트용 쿼리
@@ -17,6 +19,7 @@ public interface HomeworkRepository extends JpaRepository<Homework, Integer> {
 	List<Homework> findHomeworkInDateRange(@Param("studentId") int studentId,
 			@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 
-	public void deleteBySubject_subjectId(int subjectId);
+	@Transactional
+	public void deleteBySubject_subjectId(Integer subjectId);
 	
 }

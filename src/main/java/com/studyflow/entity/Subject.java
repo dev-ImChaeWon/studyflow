@@ -1,5 +1,6 @@
 package com.studyflow.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -26,14 +27,14 @@ public class Subject {
 	@JoinColumn(name = "teacher_id", nullable = false)
 	private Teacher teacher;
 
-	@OneToMany(mappedBy = "subject", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Homework> homework;
+	@OneToMany(mappedBy = "subject", cascade = CascadeType.ALL)
+	private List<Homework> homework = new ArrayList<>();
 
-	@OneToMany(mappedBy = "subject", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<StudentSubject> studentSubjects;
+	@OneToMany(mappedBy = "subject", cascade = CascadeType.ALL)
+	private List<StudentSubject> studentSubjects = new ArrayList<>();
 
-	@OneToMany(mappedBy = "subject", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<TestScore> testScore;
+	@OneToMany(mappedBy = "subject", cascade = CascadeType.ALL)
+	private List<TestScore> testScore = new ArrayList<>();
 
 	public List<StudentSubject> getStudentSubjects() {
 		return studentSubjects;

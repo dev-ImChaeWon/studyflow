@@ -129,7 +129,7 @@ public class SubjectService {
 			return false;
 		}
 		
-//		homr.deleteBySubject_subjectId(subjectId);
+		homr.deleteBySubject_subjectId(subjectId);
 		
 		subr.deleteById(subjectId);
 		
