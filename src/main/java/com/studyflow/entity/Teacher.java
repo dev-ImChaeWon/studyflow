@@ -16,7 +16,7 @@ public class Teacher {
 	private Character userRole;
 	private String userName;
 	
-	@OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Subject> subject;
 
 	public List<Subject> getSubject() {

@@ -16,5 +16,7 @@ public interface HomeworkRepository extends JpaRepository<Homework, Integer> {
 	@Query("SELECT h FROM Homework h WHERE h.student.studentId = :studentId AND h.homeworkDatetime >= :startDate AND h.homeworkDatetime < :endDate")
 	List<Homework> findHomeworkInDateRange(@Param("studentId") int studentId,
 			@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
+
+	public void deleteBySubject_subjectId(int subjectId);
 	
 }

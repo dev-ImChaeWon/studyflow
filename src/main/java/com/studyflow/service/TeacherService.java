@@ -141,7 +141,7 @@ public class TeacherService {
 		Teacher resEntity = tear.save(teacherEntity);
 		
 		// SubjectService의 updateSubject로 save
-		SubjectService ssMethod = new SubjectService(subr);
+		SubjectService ssMethod = new SubjectService(subr, tear, null);
 		SubjectDTO subdto = new SubjectDTO();
 		TeacherDTO teadto = new TeacherDTO();
 		for(Subject s : subli) {			

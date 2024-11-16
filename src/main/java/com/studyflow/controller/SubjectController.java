@@ -6,8 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.studyflow.dto.SubjectDTO;
@@ -44,4 +47,15 @@ public class SubjectController {
 	public List<SubjectDTO> getSubjectsByStudentId(@RequestParam Integer studentId) {
 		return subs.getSubjectsByStudentId(studentId);
 	}
+	
+	@PostMapping("/api/subject")
+	public ResponseEntity<SubjectDTO> createSubject(@RequestBody SubjectDTO subject){
+		return ResponseEntity.ok(subs.createSubject(subject));
+	}
+	
+	@DeleteMapping("/api/subject/{subjectId}")
+	public ResponseEntity<String> deleteSubject(@PathVariable(name="subjectId") int subjectId){
+		return ResponseEntity.ok(subs.deleteSubject(subjectId) ? "성공" : "실패");
+	}
+	
 }

@@ -51,13 +51,6 @@ public class StudentController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
-
-	// 학생 목록 조회 API
-//	public ResponseEntity<List<StudentDTO>> getAllStudent() { // List<StudentDTO> 타입
-//		List<StudentDTO> res = stus.getAllStudent();
-//		
-//		return ResponseEntity.status(200).body(res);
-//	}
 	
 	// 날짜별 출결 여부 조회 API
 	@GetMapping("/api/attendance")

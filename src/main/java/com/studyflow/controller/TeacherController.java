@@ -42,12 +42,13 @@ public class TeacherController {
 		return ResponseEntity.ok(teas.createTeacher(teacher));
 	}
 	
-	
+	// 선생님 과목 수정 API
 	@PutMapping("/api/teacher/{userId}")
 	public ResponseEntity<TeacherDTO> updateTeacher(@PathVariable(name="userId") String userId,  @RequestBody TeacherDTO teacher){
 		return ResponseEntity.ok(teas.updateTeacher( userId, teacher));
 	}
 	
+	// 선생님 삭제 API
 	@DeleteMapping("/api/teacher/{userId}")
 	public ResponseEntity<String> deleteTeacher(@PathVariable(name="userId") String userId){
 		return ResponseEntity.ok(teas.deleteTeacher( userId) ? "성공" : "실패");

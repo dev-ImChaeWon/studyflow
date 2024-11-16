@@ -9,9 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.studyflow.dto.SubjectDTO;
+import com.studyflow.dto.TeacherDTO;
 import com.studyflow.entity.Subject;
 import com.studyflow.entity.Teacher;
+import com.studyflow.repository.HomeworkRepository;
 import com.studyflow.repository.SubjectRepository;
+import com.studyflow.repository.TeacherRepository;
 
 import jakarta.transaction.Transactional;
 
@@ -19,10 +22,14 @@ import jakarta.transaction.Transactional;
 public class SubjectService {
 
 	SubjectRepository subr;
+	TeacherRepository tear;
+	HomeworkRepository homr;
 
 	@Autowired
-	public SubjectService(SubjectRepository subr) {
+	public SubjectService(SubjectRepository subr, TeacherRepository tear, HomeworkRepository homr) {
 		this.subr = subr;
+		this.tear = tear;
+		this.homr = homr;
 	}
 	
 	// 과목 수정 메소드
@@ -70,12 +77,22 @@ public class SubjectService {
 	}
 
 	// 강좌 개설 시 과목 만드는 메소드
-	public void createSubject(SubjectDTO s) {
+	public SubjectDTO createSubject(SubjectDTO s) {
 		Subject subjectEntity = new Subject();
+		Teacher teacher = new Teacher();
+		teacher.setUserId(s.getTeacher().getUserId());
 		subjectEntity.setSubjectName(s.getSubjectName());
-
-		subjectEntity.setTeacher(null);
-
+		subjectEntity.setTeacher(teacher);
+		
+		Subject resEntity = subr.save(subjectEntity);
+		SubjectDTO subdto = new SubjectDTO();
+		TeacherDTO teadto = new TeacherDTO();
+		subdto.setSubjectId(subjectEntity.getSubjectId());
+		subdto.setSubjectName(subjectEntity.getSubjectName());
+		teadto.setUserId(subjectEntity.getTeacher().getUserId());
+		subdto.setTeacher(teadto);
+		
+		return subdto;
 	}
 
 	// 교사 id로 과목 가져오는 메소드
@@ -103,6 +120,20 @@ public class SubjectService {
 			dto.setSubjectName(subject.getSubjectName());
 			return dto;
 		}).collect(Collectors.toList());
+	}
+	
+	// 과목 id로 해당 과목 삭제하는 메소드
+	public boolean deleteSubject(int subjectId) {
+		Optional<Subject> optS = subr.findById(subjectId);
+		if(!optS.isPresent()) {
+			return false;
+		}
+		
+//		homr.deleteBySubject_subjectId(subjectId);
+		
+		subr.deleteById(subjectId);
+		
+		return true;
 	}
 
 }
