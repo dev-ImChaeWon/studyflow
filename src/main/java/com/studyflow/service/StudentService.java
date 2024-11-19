@@ -678,42 +678,63 @@ public class StudentService {
 				res.setStudentId(student.getStudentId());
 				res.setStudentName(student.getStudentName());
 				List<Subject> subli = stusubr.findAllSubjectsByStudentId(student.getStudentId());
-				
-				List<SubjectDTO> tmpSubli = new ArrayList<>(); 
-				for(Subject subj : subli) {
+
+				List<SubjectDTO> tmpSubli = new ArrayList<>();
+				for (Subject subj : subli) {
 					SubjectDTO subdto = new SubjectDTO();
 					subdto.setSubjectId(subj.getSubjectId());
 					subdto.setSubjectName(subj.getSubjectName());
-					
+
 					tmpSubli.add(subdto);
 				}
 				res.setSubjects(tmpSubli);
 				return res;
 			}).collect(Collectors.toList());
 		} else {
-			List<Student> students =  stur.findAll();
+			List<Student> students = stur.findAll();
 			List<StudentDTO> res = new ArrayList<>();
-			
-			for(Student s : students) {				
+
+			for (Student s : students) {
 				StudentDTO studto = new StudentDTO();
 				studto.setStudentId(s.getStudentId());
 				studto.setStudentName(s.getStudentName());
-				
+
 				List<Subject> subli = stusubr.findAllSubjectsByStudentId(s.getStudentId());
-				List<SubjectDTO> tmpSubli = new ArrayList<>(); 
-				for(Subject subject : subli) {
+				List<SubjectDTO> tmpSubli = new ArrayList<>();
+				for (Subject subject : subli) {
 					SubjectDTO subdto = new SubjectDTO();
 					subdto.setSubjectId(subject.getSubjectId());
 					subdto.setSubjectName(subject.getSubjectName());
-					
+
 					tmpSubli.add(subdto);
 				}
-				
+
 				studto.setSubjects(tmpSubli);
 				res.add(studto);
 			}
 			return res;
 		}
 
+	}
+	
+	// 학생 수정 메서드
+	public StudentDTO updateStudent(int studentId, StudentDTO s) {
+		Optional<Student> optS = stur.findById(studentId);
+		if(!optS.isPresent()) {
+			return null;
+		}
+		
+		Student studentEntity = optS.get();
+		
+		studentEntity.setStudentId(studentId);
+		
+		if(s.getStudentName() != null) {
+			studentEntity.setStudentName(s.getStudentName());
+		}
+		
+		List<StudentSubject> stusubli = new ArrayList<>();
+		
+		
+		return null;
 	}
 }

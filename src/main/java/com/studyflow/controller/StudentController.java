@@ -10,8 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,28 +31,27 @@ public class StudentController {
 	StudentService stus;
 	TestScoreService tests;
 
-
 	@Autowired
 	public StudentController(StudentService stus, TestScoreService tests) {
 		this.stus = stus;
 		this.tests = tests;
 	}
-	
-	// 테스트 점수 생성 API
-    @PostMapping("/api/test-create")
-    public ResponseEntity<TestScoreDTO> createTestScore(@RequestBody TestScoreDTO testScoreDTO) {
-        try {
-            // 서비스 계층을 호출하여 점수 생성
-            TestScoreDTO createdTestScore = tests.createTestScore(testScoreDTO);
 
-            // 성공적으로 생성된 경우 201 Created 응답
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdTestScore);
-        } catch (Exception e) {
-            // 기타 예기치 않은 예외 발생 시 500 Internal Server Error 응답
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
-    }
-	
+	// 테스트 점수 생성 API
+	@PostMapping("/api/test-create")
+	public ResponseEntity<TestScoreDTO> createTestScore(@RequestBody TestScoreDTO testScoreDTO) {
+		try {
+			// 서비스 계층을 호출하여 점수 생성
+			TestScoreDTO createdTestScore = tests.createTestScore(testScoreDTO);
+
+			// 성공적으로 생성된 경우 201 Created 응답
+			return ResponseEntity.status(HttpStatus.CREATED).body(createdTestScore);
+		} catch (Exception e) {
+			// 기타 예기치 않은 예외 발생 시 500 Internal Server Error 응답
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+		}
+	}
+
 	// 날짜별 출결 여부 조회 API
 	@GetMapping("/api/attendance")
 	public ResponseEntity<List<AttendanceDTO>> getAttendanceByDate(
@@ -76,18 +76,24 @@ public class StudentController {
 		return ResponseEntity.status(200).body(res);
 
 	}
-	
+
 	@GetMapping("/api/student-by-subject")
 	public ResponseEntity<List<StudentDTO>> getStudentBySubject(
 			@RequestParam(name = "subjectName", required = false) String subjectName) {
 		List<StudentDTO> res = stus.getStudentBySubject(subjectName);
-		
+
 		return ResponseEntity.status(200).body(res);
 	}
-	
+
 	@PostMapping("api/student")
-	public ResponseEntity<StudentDTO> createStudent(@RequestBody StudentDTO student){
+	public ResponseEntity<StudentDTO> createStudent(@RequestBody StudentDTO student) {
 		return ResponseEntity.ok(stus.createStudent(student));
+	}
+
+	@PutMapping("/api/student/{studentId}")
+	public ResponseEntity<StudentDTO> updateStudent(@PathVariable(name = "studentId") int studentId,
+			@RequestBody StudentDTO student) {
+		return ResponseEntity.ok(stus.updateStudent(studentId, student));
 	}
 
 }

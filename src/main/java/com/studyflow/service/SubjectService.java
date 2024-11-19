@@ -8,11 +8,16 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.studyflow.dto.StudentDTO;
+import com.studyflow.dto.StudentSubjectDTO;
 import com.studyflow.dto.SubjectDTO;
 import com.studyflow.dto.TeacherDTO;
+import com.studyflow.entity.Student;
+import com.studyflow.entity.StudentSubject;
 import com.studyflow.entity.Subject;
 import com.studyflow.entity.Teacher;
 import com.studyflow.repository.HomeworkRepository;
+import com.studyflow.repository.StudentSubjectRepository;
 import com.studyflow.repository.SubjectRepository;
 import com.studyflow.repository.TeacherRepository;
 
@@ -24,12 +29,14 @@ public class SubjectService {
 	SubjectRepository subr;
 	TeacherRepository tear;
 	HomeworkRepository homr;
+	StudentSubjectRepository stusubr;
 
 	@Autowired
-	public SubjectService(SubjectRepository subr, TeacherRepository tear, HomeworkRepository homr) {
+	public SubjectService(SubjectRepository subr, TeacherRepository tear, HomeworkRepository homr, StudentSubjectRepository stusubr) {
 		this.subr = subr;
 		this.tear = tear;
 		this.homr = homr;
+		this.stusubr = stusubr;
 	}
 	
 	// 과목 수정 메소드
@@ -136,4 +143,31 @@ public class SubjectService {
 		return true;
 	}
 
+	// 학생-과목 추가하는 메소드, 프론트에서 select 태그로 과목이름 받아올 것
+	public StudentSubjectDTO createStudentSubject(StudentSubjectDTO ss) {
+		Optional<StudentSubject> optSS = stusubr.findByStudent_studentIdAndSubject_subjectId(ss.getStudent().getStudentId(), ss.getSubject().getSubjectId());
+		if(optSS.isPresent()) {
+			return null;
+		}
+		
+		StudentSubject ssEntity = new StudentSubject();
+		Student student = new Student();
+		Subject subject = new Subject();
+		student.setStudentId(ss.getStudent().getStudentId());
+		subject.setSubjectId(ss.getSubject().getSubjectId());
+		ssEntity.setStudent(student);
+		ssEntity.setSubject(subject);
+		
+		StudentSubject resEntity = stusubr.save(ssEntity);
+		StudentSubjectDTO resdto = new StudentSubjectDTO();
+		StudentDTO studentdto = new StudentDTO();
+		SubjectDTO subjectdto = new SubjectDTO();
+		studentdto.setStudentId(resEntity.getStudent().getStudentId());
+		subjectdto.setSubjectId(resEntity.getSubject().getSubjectId());
+		resdto.setId(resEntity.getId());
+		resdto.setStudent(studentdto);
+		resdto.setSubject(subjectdto);
+		
+		return resdto;
+	}
 }
