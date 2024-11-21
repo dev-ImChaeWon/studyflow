@@ -85,11 +85,13 @@ public class StudentController {
 		return ResponseEntity.status(200).body(res);
 	}
 
+	// 학생 추가하는 API
 	@PostMapping("api/student")
 	public ResponseEntity<StudentDTO> createStudent(@RequestBody StudentDTO student) {
 		return ResponseEntity.ok(stus.createStudent(student));
 	}
 
+	// 학생 수정하는 API
 	@PutMapping("/api/student/{studentId}")
 	public ResponseEntity<StudentDTO> updateStudent(@PathVariable(name = "studentId") int studentId,
 			@RequestBody StudentDTO student) {

@@ -68,4 +68,5 @@ public class SubjectController {
 		return ResponseEntity.ok(subs.createStudentSubject(studentSubject));
 	}
 	
+	
 }

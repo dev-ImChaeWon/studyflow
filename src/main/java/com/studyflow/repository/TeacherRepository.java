@@ -12,4 +12,6 @@ public interface TeacherRepository extends JpaRepository<Teacher, String>{
 	public List<Teacher> findAllByUserRole(Character role);
 
 	public Optional<Teacher> findByUserId(String userId);
+	
+	Optional<Teacher> findByUserName(String userName);
 }

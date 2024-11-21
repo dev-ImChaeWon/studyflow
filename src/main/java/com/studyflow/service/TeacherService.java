@@ -22,7 +22,7 @@ public class TeacherService {
 	TeacherRepository tear;
 	SubjectRepository subr;
 	BCryptPasswordEncoder encoder;
-	
+
 	@Autowired
 	public TeacherService(TeacherRepository tear, SubjectRepository subr) {
 		this.tear = tear;
@@ -50,42 +50,42 @@ public class TeacherService {
 
 	// 조교는 나오면 안 됨. 강사만 나올 수 있도록 코드 수정 ( findAllByUserRole(Character role) )
 	// 학원에 등록된 user_role이 T인 선생님을 조회하는 API
-	public List<TeacherDTO> getTeacherT(){
+	public List<TeacherDTO> getTeacherT() {
 		List<Teacher> li = tear.findAllByUserRole('T');
 		List<TeacherDTO> res = new ArrayList<>();
-		
-		for(Teacher t: li) {
+
+		for (Teacher t : li) {
 			TeacherDTO teadto = new TeacherDTO();
 			teadto.setUserId(t.getUserId());
 			teadto.setUserName(t.getUserName());
 			teadto.setUserRole(t.getUserRole());
-			
+
 			List<SubjectDTO> subjectList = new ArrayList<>();
-			
-			for(Subject s : t.getSubject()) {		
-				if((s.getTeacher().getUserId()).equals(t.getUserId())) {					
+
+			for (Subject s : t.getSubject()) {
+				if ((s.getTeacher().getUserId()).equals(t.getUserId())) {
 					SubjectDTO subdto = new SubjectDTO();
 					subdto.setSubjectId(s.getSubjectId());
 					subdto.setSubjectName(s.getSubjectName());
-					
+
 					subjectList.add(subdto);
 				}
-			}			
+			}
 			teadto.setSubject(subjectList);
 			res.add(teadto);
 		}
-		
+
 		return res;
-		
+
 	}
-	
+
 	// 선생님 추가 메서드
 	public TeacherDTO createTeacher(TeacherDTO t) {
 		Optional<Teacher> optT = tear.findById(t.getUserId());
-		if(optT.isPresent()) {
+		if (optT.isPresent()) {
 			return null;
 		}
-		
+
 		Teacher teacherEntity = new Teacher();
 		teacherEntity.setUserId(t.getUserId());
 		teacherEntity.setUserName(t.getUserName());
@@ -97,78 +97,70 @@ public class TeacherService {
 		resDto.setUserId(resEntity.getUserId());
 		resDto.setUserName(resEntity.getUserName());
 		resDto.setUserRole(resEntity.getUserRole());
-		
+
 		return resDto;
 	}
-	
+
 	// 선생님 수정 메서드
 	public TeacherDTO updateTeacher(String userId, TeacherDTO t) {
 		Optional<Teacher> optT = tear.findById(userId);
-		if(!optT.isPresent()) {
+		// 수정하려는 teacherName이 이미 존재한다면 null을 return
+		Optional<Teacher> optTeacherName = tear.findByUserName(t.getUserName());
+		if (!optT.isPresent() || optTeacherName.isPresent()) {
 			return null;
 		}
-		
+
 		Teacher teacherEntity = optT.get();
-		
+
 		teacherEntity.setUserId(userId);
-		
-		if(t.getUserName() != null) {
-			teacherEntity.setUserName(t.getUserName());			
+
+		if (t.getUserName() != null) {
+			teacherEntity.setUserName(t.getUserName());
 		}
-		
-		if(t.getUserPassword() != null) {
-			teacherEntity.setUserPassword(t.getUserPassword());			
+
+		if (t.getUserPassword() != null) {
+			teacherEntity.setUserPassword(t.getUserPassword());
 		}
-		
-		if(t.getUserRole() != null) {
+
+		if (t.getUserRole() != null) {
 			teacherEntity.setUserRole(t.getUserRole());
 		}
 
-		List<Subject> subli = new ArrayList<>();
-		if(t.getSubject() != null) {
-	        for(SubjectDTO subjectDTO : t.getSubject()) {
-	            Optional<Subject> existingSubject = subr.findById(subjectDTO.getSubjectId());
-	            if (existingSubject.isPresent()) {
-	                Subject subject = existingSubject.get();
-	                subject.setSubjectName(subjectDTO.getSubjectName());
-	                subject.setTeacher(teacherEntity);  
-	                subli.add(subject);
-	            }
-	        }
-	        teacherEntity.setSubject(subli);
-	    }
-		
 		Teacher resEntity = tear.save(teacherEntity);
-		
-		// SubjectService의 updateSubject로 save
-		SubjectService ssMethod = new SubjectService(subr, tear, null, null);
-		SubjectDTO subdto = new SubjectDTO();
-		TeacherDTO teadto = new TeacherDTO();
-		for(Subject s : subli) {			
-			subdto.setSubjectName(s.getSubjectName());
-			teadto.setUserId(resEntity.getUserId());
-			subdto.setTeacher(teadto);
-			ssMethod.updateSubject(s.getSubjectId(), subdto);
+
+		List<Subject> subli = new ArrayList<>();
+		if (t.getSubject() != null) {
+			for (SubjectDTO subjectDTO : t.getSubject()) {
+				Optional<Subject> existingSubject = subr.findById(subjectDTO.getSubjectId());
+				if (existingSubject.isPresent()) {
+					SubjectDTO subdto = new SubjectDTO();
+					subdto.setSubjectId(subjectDTO.getSubjectId());
+					subdto.setSubjectName(subjectDTO.getSubjectName());
+					subdto.setTeacher(t);
+					SubjectService subs = new SubjectService(subr, tear, null, null);
+					subs.updateSubject(subdto.getSubjectId(), subdto);
+				}
+			}
 		}
-		
+
 		// 저장된 Teacher 리턴
 		TeacherDTO resDto = new TeacherDTO();
 		resDto.setUserId(resEntity.getUserId());
 		resDto.setUserName(resEntity.getUserName());
 		resDto.setUserRole(resEntity.getUserRole());
-		
+
 		return resDto;
 	}
-	
+
 	public boolean deleteTeacher(String userId) {
 		Optional<Teacher> optT = tear.findById(userId);
-		if(!optT.isPresent()) {
+		if (!optT.isPresent()) {
 			return false;
 		}
-		
+
 		tear.deleteById(userId);
-		
+
 		return true;
 	}
-	
+
 }

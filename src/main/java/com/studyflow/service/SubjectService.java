@@ -32,39 +32,42 @@ public class SubjectService {
 	StudentSubjectRepository stusubr;
 
 	@Autowired
-	public SubjectService(SubjectRepository subr, TeacherRepository tear, HomeworkRepository homr, StudentSubjectRepository stusubr) {
+	public SubjectService(SubjectRepository subr, TeacherRepository tear, HomeworkRepository homr,
+			StudentSubjectRepository stusubr) {
 		this.subr = subr;
 		this.tear = tear;
 		this.homr = homr;
 		this.stusubr = stusubr;
 	}
-	
+
 	// 과목 수정 메소드
-	public SubjectDTO updateSubject(int subjectId, SubjectDTO s) { 
+	public SubjectDTO updateSubject(int subjectId, SubjectDTO s) {
 		Optional<Subject> optS = subr.findById(subjectId);
-		if(!optS.isPresent()) {
+		// 수정하려는 subjectName이 이미 존재한다면 null을 return
+		Optional<Subject> optSubjectName = subr.findBySubjectName(s.getSubjectName());
+		if (!optS.isPresent() || optSubjectName.isPresent()) {
 			return null;
-		} 
-		
+		}
+
 		Subject subjectEntity = optS.get();
-		
+
 		subjectEntity.setSubjectId(subjectId);
-		
-		if(s.getSubjectName() != null) {
+
+		if (s.getSubjectName() != null && !s.getSubjectName().equals(subjectEntity.getSubjectName())) {
 			subjectEntity.setSubjectName(s.getSubjectName());
 		}
-		
-		if(s.getTeacher().getUserId() != null) {
+
+		if (s.getTeacher().getUserId() != null) {
 			Teacher teacherId = new Teacher();
 			teacherId.setUserId(s.getTeacher().getUserId());
 			subjectEntity.setTeacher(teacherId);
 		}
-		
+
 		Subject subEntity = subr.save(subjectEntity);
 		SubjectDTO subdto = new SubjectDTO();
 		subdto.setSubjectId(subEntity.getSubjectId());
 		subdto.setSubjectName(subEntity.getSubjectName());
-		
+
 		return subdto;
 	}
 
@@ -90,7 +93,7 @@ public class SubjectService {
 		teacher.setUserId(s.getTeacher().getUserId());
 		subjectEntity.setSubjectName(s.getSubjectName());
 		subjectEntity.setTeacher(teacher);
-		
+
 		Subject resEntity = subr.save(subjectEntity);
 		SubjectDTO subdto = new SubjectDTO();
 		TeacherDTO teadto = new TeacherDTO();
@@ -98,7 +101,7 @@ public class SubjectService {
 		subdto.setSubjectName(subjectEntity.getSubjectName());
 		teadto.setUserId(subjectEntity.getTeacher().getUserId());
 		subdto.setTeacher(teadto);
-		
+
 		return subdto;
 	}
 
@@ -128,28 +131,29 @@ public class SubjectService {
 			return dto;
 		}).collect(Collectors.toList());
 	}
-	
+
 	// 과목 id로 해당 과목 삭제하는 메소드
 	public boolean deleteSubject(int subjectId) {
 		Optional<Subject> optS = subr.findById(subjectId);
-		if(!optS.isPresent()) {
+		if (!optS.isPresent()) {
 			return false;
 		}
-		
+
 		homr.deleteBySubject_subjectId(subjectId);
-		
+
 		subr.deleteById(subjectId);
-		
+
 		return true;
 	}
 
 	// 학생-과목 추가하는 메소드, 프론트에서 select 태그로 과목이름 받아올 것
 	public StudentSubjectDTO createStudentSubject(StudentSubjectDTO ss) {
-		Optional<StudentSubject> optSS = stusubr.findByStudent_studentIdAndSubject_subjectId(ss.getStudent().getStudentId(), ss.getSubject().getSubjectId());
-		if(optSS.isPresent()) {
+		Optional<StudentSubject> optSS = stusubr.findByStudent_studentIdAndSubject_subjectId(
+				ss.getStudent().getStudentId(), ss.getSubject().getSubjectId());
+		if (optSS.isPresent()) {
 			return null;
 		}
-		
+
 		StudentSubject ssEntity = new StudentSubject();
 		Student student = new Student();
 		Subject subject = new Subject();
@@ -157,7 +161,7 @@ public class SubjectService {
 		subject.setSubjectId(ss.getSubject().getSubjectId());
 		ssEntity.setStudent(student);
 		ssEntity.setSubject(subject);
-		
+
 		StudentSubject resEntity = stusubr.save(ssEntity);
 		StudentSubjectDTO resdto = new StudentSubjectDTO();
 		StudentDTO studentdto = new StudentDTO();
@@ -167,7 +171,7 @@ public class SubjectService {
 		resdto.setId(resEntity.getId());
 		resdto.setStudent(studentdto);
 		resdto.setSubject(subjectdto);
-		
+
 		return resdto;
 	}
 }
