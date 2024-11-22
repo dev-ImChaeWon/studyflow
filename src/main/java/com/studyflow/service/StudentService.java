@@ -666,75 +666,86 @@ public class StudentService {
 	}
 
 	// 과목으로 학생 리스트 가져오기
-	public List<StudentDTO> getStudentBySubject(String subjectName) {
-		Optional<Subject> isSubject = subr.findBySubjectName(subjectName);
+	public List<StudentDTO> getStudentsBySubjectName(String subjectName) {
+	    // 과목을 이름으로 찾기
+	    Optional<Subject> subjectOpt = subr.findBySubjectName(subjectName);
 
-		if (isSubject.isPresent()) {
-			Subject subject = subr.findBySubjectName(subjectName).orElseThrow();
-			List<Student> students = stur.findBySubjectId(subject.getSubjectId());
+	    // 과목이 존재하면 해당 과목에 등록된 학생 리스트 가져오기
+	    if (subjectOpt.isPresent()) {
+	        Subject subject = subjectOpt.get();
+	        List<StudentSubject> studentSubjects = stusubr.findBySubject_subjectId(subject.getSubjectId());
 
-			return students.stream().map(student -> {
-				StudentDTO res = new StudentDTO();
-				res.setStudentId(student.getStudentId());
-				res.setStudentName(student.getStudentName());
-				List<Subject> subli = stusubr.findAllSubjectsByStudentId(student.getStudentId());
+	        // 학생 정보를 담을 리스트
+	        List<StudentDTO> studentDTOs = new ArrayList<>();
 
-				List<SubjectDTO> tmpSubli = new ArrayList<>();
-				for (Subject subj : subli) {
-					SubjectDTO subdto = new SubjectDTO();
-					subdto.setSubjectId(subj.getSubjectId());
-					subdto.setSubjectName(subj.getSubjectName());
+	        // 학생 목록을 조회하여 DTO에 맞게 변환
+	        for (StudentSubject studentSubject : studentSubjects) {
+	            Student student = studentSubject.getStudent();  // StudentSubject에서 학생 정보 가져오기
+	            StudentDTO studentDTO = new StudentDTO();
+	            studentDTO.setStudentId(student.getStudentId());
+	            studentDTO.setStudentName(student.getStudentName());
 
-					tmpSubli.add(subdto);
-				}
-				res.setSubjects(tmpSubli);
-				return res;
-			}).collect(Collectors.toList());
-		} else {
-			List<Student> students = stur.findAll();
-			List<StudentDTO> res = new ArrayList<>();
+	            // 학생이 등록한 과목들 가져오기
+	            List<SubjectDTO> subjectDTOs = new ArrayList<>();
+	            for(StudentSubject ss : studentSubjects) {
+	            	SubjectDTO subdto = new SubjectDTO();
+	            	subdto.setSubjectId(ss.getSubject().getSubjectId());
+	            	subdto.setSubjectName(ss.getSubject().getSubjectName());
+	            	
+	            	subjectDTOs.add(subdto);
+	            }
 
-			for (Student s : students) {
-				StudentDTO studto = new StudentDTO();
-				studto.setStudentId(s.getStudentId());
-				studto.setStudentName(s.getStudentName());
+	            studentDTO.setSubjects(subjectDTOs);
+	            studentDTOs.add(studentDTO);
+	        }
 
-				List<Subject> subli = stusubr.findAllSubjectsByStudentId(s.getStudentId());
-				List<SubjectDTO> tmpSubli = new ArrayList<>();
-				for (Subject subject : subli) {
-					SubjectDTO subdto = new SubjectDTO();
-					subdto.setSubjectId(subject.getSubjectId());
-					subdto.setSubjectName(subject.getSubjectName());
+	        return studentDTOs;
+	    } else {
+	        // 과목이 없으면 모든 학생 정보 가져오기
+	        List<Student> students = stur.findAll();
+	        List<StudentDTO> studentDTOs = new ArrayList<>();
 
-					tmpSubli.add(subdto);
-				}
+	        for (Student student : students) {
+	            StudentDTO studentDTO = new StudentDTO();
+	            studentDTO.setStudentId(student.getStudentId());
+	            studentDTO.setStudentName(student.getStudentName());
 
-				studto.setSubjects(tmpSubli);
-				res.add(studto);
-			}
-			return res;
-		}
+	            // 학생이 등록한 과목들 가져오기
+	            List<Subject> subjects = stusubr.findAllSubjectsByStudentId(student.getStudentId());
+	            List<SubjectDTO> subjectDTOs = subjects.stream()
+	                .map(subj -> {
+	                    SubjectDTO subjectDTO = new SubjectDTO();
+	                    subjectDTO.setSubjectId(subj.getSubjectId());
+	                    subjectDTO.setSubjectName(subj.getSubjectName());
+	                    return subjectDTO;
+	                }).collect(Collectors.toList());
 
+	            studentDTO.setSubjects(subjectDTOs);
+	            studentDTOs.add(studentDTO);
+	        }
+
+	        return studentDTOs;
+	    }
 	}
-	
+
 	// 학생 수정 메서드
 	public StudentDTO updateStudent(int studentId, StudentDTO s) {
 		Optional<Student> optS = stur.findById(studentId);
-		if(!optS.isPresent()) {
+		if (!optS.isPresent()) {
 			return null;
 		}
-		
+
 		Student studentEntity = optS.get();
-		
+
 		studentEntity.setStudentId(studentId);
-		
-		if(s.getStudentName() != null) {
+
+		if (s.getStudentName() != null) {
 			studentEntity.setStudentName(s.getStudentName());
 		}
-		
+
 		List<StudentSubject> stusubli = new ArrayList<>();
-		
-		
+
 		return null;
 	}
+
 }

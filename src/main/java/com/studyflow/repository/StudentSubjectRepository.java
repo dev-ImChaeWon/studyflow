@@ -15,5 +15,10 @@ public interface StudentSubjectRepository extends JpaRepository<StudentSubject, 
 	@Query("SELECT ss.subject FROM StudentSubject ss WHERE ss.student.studentId = :studentId")
 	public List<Subject> findAllSubjectsByStudentId(@Param("studentId") Integer studentId);
 	
+    @Query("SELECT ss.subject FROM StudentSubject ss WHERE ss.student.studentId = :studentId")
+    List<Subject> findSubjectsByStudentId(@Param("studentId") Integer studentId);
+	
+    List<StudentSubject> findBySubject_subjectId(int subjectId);
+    
 	public Optional<StudentSubject> findByStudent_studentIdAndSubject_subjectId(Integer studentId, Integer subjectId);
 }

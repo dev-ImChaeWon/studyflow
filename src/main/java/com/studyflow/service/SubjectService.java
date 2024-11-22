@@ -148,17 +148,27 @@ public class SubjectService {
 
 	// 학생-과목 추가하는 메소드, 프론트에서 select 태그로 과목이름 받아올 것
 	public StudentSubjectDTO createStudentSubject(StudentSubjectDTO ss) {
+		// 프론트에서 받아온 subjectName으로 subjectId 찾기
+		String subjectName = ss.getSubject().getSubjectName();
+		Optional<Subject> optS = subr.findBySubjectName(subjectName);
+		
+	    if (!optS.isPresent()) {
+	        throw new IllegalArgumentException("Subject with name '" + subjectName + "' does not exist.");
+	    }
+	    
+		int subjectId = optS.get().getSubjectId();
+		
 		Optional<StudentSubject> optSS = stusubr.findByStudent_studentIdAndSubject_subjectId(
-				ss.getStudent().getStudentId(), ss.getSubject().getSubjectId());
+				ss.getStudent().getStudentId(), subjectId);
 		if (optSS.isPresent()) {
-			return null;
+			throw new IllegalArgumentException("Student is already enrolled in the subject: " + subjectName);
 		}
 
 		StudentSubject ssEntity = new StudentSubject();
 		Student student = new Student();
 		Subject subject = new Subject();
 		student.setStudentId(ss.getStudent().getStudentId());
-		subject.setSubjectId(ss.getSubject().getSubjectId());
+		subject.setSubjectId(subjectId);
 		ssEntity.setStudent(student);
 		ssEntity.setSubject(subject);
 

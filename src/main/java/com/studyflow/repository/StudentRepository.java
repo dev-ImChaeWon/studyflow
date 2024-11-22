@@ -134,5 +134,7 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
 	
 	@Query("SELECT s FROM Student s JOIN s.homework h WHERE h.subject.subjectId = :subjectId")
     List<Student> findBySubjectId(@Param("subjectId") Integer subjectId);
-	
+
+    @Query("SELECT ss.student FROM StudentSubject ss WHERE ss.subject.subjectName = :subjectName")
+    List<Student> findStudentsBySubjectName(@Param("subjectName") String subjectName);
 }

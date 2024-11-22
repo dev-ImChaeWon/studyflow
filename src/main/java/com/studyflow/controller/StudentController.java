@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.studyflow.dto.AttendanceDTO;
 import com.studyflow.dto.StudentDTO;
@@ -24,7 +25,7 @@ import com.studyflow.response.PageResponse;
 import com.studyflow.service.StudentService;
 import com.studyflow.service.TestScoreService;
 
-@Controller
+@RestController
 @CrossOrigin(origins = "http://localhost:8088")
 public class StudentController {
 
@@ -77,13 +78,11 @@ public class StudentController {
 
 	}
 
-	@GetMapping("/api/student-by-subject")
-	public ResponseEntity<List<StudentDTO>> getStudentBySubject(
-			@RequestParam(name = "subjectName", required = false) String subjectName) {
-		List<StudentDTO> res = stus.getStudentBySubject(subjectName);
-
-		return ResponseEntity.status(200).body(res);
-	}
+	// 과목 이름으로 학생 불러오는 API
+    @GetMapping("/api/student-by-subject")
+    public List<StudentDTO> getStudentsBySubject(@RequestParam(name = "subjectName", required = false) String subjectName) {
+        return stus.getStudentsBySubjectName(subjectName);
+    }
 
 	// 학생 추가하는 API
 	@PostMapping("api/student")
