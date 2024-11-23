@@ -666,14 +666,11 @@ public class StudentService {
 	}
 
 	// 과목으로 학생 리스트 가져오기
-	public List<StudentDTO> getStudentsBySubjectName(String subjectName) {
+	public List<StudentDTO> getStudentsBySubjectName(Integer subjectId) {
 	    // 과목을 이름으로 찾기
-	    Optional<Subject> subjectOpt = subr.findBySubjectName(subjectName);
-
 	    // 과목이 존재하면 해당 과목에 등록된 학생 리스트 가져오기
-	    if (subjectOpt.isPresent()) {
-	        Subject subject = subjectOpt.get();
-	        List<StudentSubject> studentSubjects = stusubr.findBySubject_subjectId(subject.getSubjectId());
+	    if (subjectId != null) {
+	        List<StudentSubject> studentSubjects = stusubr.findBySubject_subjectId(subjectId);
 
 	        // 학생 정보를 담을 리스트
 	        List<StudentDTO> studentDTOs = new ArrayList<>();
@@ -684,13 +681,15 @@ public class StudentService {
 	            StudentDTO studentDTO = new StudentDTO();
 	            studentDTO.setStudentId(student.getStudentId());
 	            studentDTO.setStudentName(student.getStudentName());
+	            
+	            List<Subject> tmp = stusubr.findAllSubjectsByStudentId(student.getStudentId());
 
 	            // 학생이 등록한 과목들 가져오기
 	            List<SubjectDTO> subjectDTOs = new ArrayList<>();
-	            for(StudentSubject ss : studentSubjects) {
+	            for(Subject ss : tmp) {
 	            	SubjectDTO subdto = new SubjectDTO();
-	            	subdto.setSubjectId(ss.getSubject().getSubjectId());
-	            	subdto.setSubjectName(ss.getSubject().getSubjectName());
+	            	subdto.setSubjectId(ss.getSubjectId());
+	            	subdto.setSubjectName(ss.getSubjectName());
 	            	
 	            	subjectDTOs.add(subdto);
 	            }

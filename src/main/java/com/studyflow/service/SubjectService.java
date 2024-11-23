@@ -79,6 +79,7 @@ public class SubjectService {
 
 		for (Subject s : li) {
 			SubjectDTO subdto = new SubjectDTO();
+			subdto.setSubjectId(s.getSubjectId());
 			subdto.setSubjectName(s.getSubjectName());
 			res.add(subdto);
 		}
