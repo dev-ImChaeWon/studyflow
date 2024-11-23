@@ -18,6 +18,7 @@ import com.studyflow.repository.TestScoreRepository;
 
 @Service
 public class TestScoreService {
+	
 	StudentRepository stur;
 	SubjectRepository subr;
 	TestScoreRepository testr;
@@ -71,6 +72,15 @@ public class TestScoreService {
 		}
 
 		return resultDTO;
+	}
+	
+	public void updateTestScore(int studentId, int subjectId) {
+		Optional<TestScore> optTS = testr.findByStudent_studentIdAndSubject_subjectId(studentId, subjectId);
+		if (!optTS.isPresent()) {
+			
+		}
+		
+		
 	}
 
 	// Student 엔티티를 StudentDTO로 변환
