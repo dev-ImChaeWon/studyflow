@@ -80,8 +80,8 @@ public class StudentController {
 
 	// 과목 이름으로 학생 불러오는 API
     @GetMapping("/api/student-by-subject")
-    public List<StudentDTO> getStudentsBySubject(@RequestParam(name = "subjectName", required = false) String subjectName) {
-        return stus.getStudentsBySubjectName(subjectName);
+    public List<StudentDTO> getStudentsBySubject(@RequestParam(name = "subjectId", required = false) Integer subjectId) {
+        return stus.getStudentsBySubjectName(subjectId);
     }
 
 	// 학생 추가하는 API
