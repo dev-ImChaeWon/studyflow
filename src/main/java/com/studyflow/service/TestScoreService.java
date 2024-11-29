@@ -1,9 +1,14 @@
 package com.studyflow.service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.studyflow.dto.StudentDTO;
@@ -15,10 +20,11 @@ import com.studyflow.entity.TestScore;
 import com.studyflow.repository.StudentRepository;
 import com.studyflow.repository.SubjectRepository;
 import com.studyflow.repository.TestScoreRepository;
+import com.studyflow.response.PageResponse;
 
 @Service
 public class TestScoreService {
-	
+
 	StudentRepository stur;
 	SubjectRepository subr;
 	TestScoreRepository testr;
@@ -28,6 +34,52 @@ public class TestScoreService {
 		this.stur = stur;
 		this.subr = subr;
 		this.testr = testr;
+	}
+	
+	// 테스트 점수 조회 메서드
+	public PageResponse<TestScoreDTO> getTestScore(int page, int size, int studentId, int subjectId, Date weeklyTestDate) {
+	    // 기본 정렬 조건 설정
+	    PageRequest pr = PageRequest.of(page - 1, size, Sort.by(Sort.Order.asc("student.studentId")));
+	    
+	    // weeklyTestDate 기본값 설정
+	    if (weeklyTestDate == null) {
+	        weeklyTestDate = new Date();
+	    }
+
+	    Page<TestScore> res;
+	    
+	    if (studentId == 0 && subjectId == 0) {
+	        res = testr.findByWeeklyTestDate(weeklyTestDate, pr);
+	    } else if (studentId == 0) {
+	        res = testr.findByWeeklyTestDateAndSubjectId(weeklyTestDate, subjectId, pr);
+	    } else if (subjectId == 0) {
+	        res = testr.findByWeeklyTestDateAndStudentId(weeklyTestDate, studentId, pr);
+	    } else {
+	        res = testr.findByWeeklyTestDateAndStudentIdAndSubjectId(weeklyTestDate, studentId, subjectId, pr);
+	    }
+
+	    List<TestScoreDTO> li = res.stream()
+	        .map(testScore -> {
+	            TestScoreDTO dto = new TestScoreDTO();
+	            dto.setId(testScore.getId());
+	            dto.setScore(testScore.getScore());
+	            dto.setWeeklyTestDate(testScore.getWeeklyTestDate());
+	            dto.setStudent(convertToStudentDTO(testScore.getStudent()));
+	            dto.setSubject(convertToSubjectDTO(testScore.getSubject()));
+	            return dto;
+	        })
+	        .toList();
+
+	    // PageResponse 생성 및 반환
+	    PageResponse<TestScoreDTO> testScorePage = new PageResponse<>();
+	    testScorePage.setList(li);
+	    testScorePage.setCurrentPage(page);
+	    testScorePage.setHasNext(page < res.getTotalPages());
+	    testScorePage.setHasPrevieous(page > 1);
+	    testScorePage.setTotalElements(res.getTotalElements());
+	    testScorePage.setTotalPages(res.getTotalPages());
+	    
+	    return testScorePage;
 	}
 
 	// 테스트 점수 생성 메서드
@@ -73,14 +125,42 @@ public class TestScoreService {
 
 		return resultDTO;
 	}
-	
-	public void updateTestScore(int studentId, int subjectId) {
+
+	// 테스트 점수 수정 메서드
+	public TestScoreDTO updateTestScore(int studentId, int subjectId, TestScoreDTO ts) {
 		Optional<TestScore> optTS = testr.findByStudent_studentIdAndSubject_subjectId(studentId, subjectId);
 		if (!optTS.isPresent()) {
-			
+			return null;
 		}
-		
-		
+
+		TestScore testScoreEntity = optTS.get();
+		Student student = new Student();
+		Subject subject = new Subject();
+
+		student.setStudentId(studentId);
+		subject.setSubjectId(subjectId);
+		testScoreEntity.setStudent(student);
+		testScoreEntity.setSubject(subject);
+
+		if (ts.getScore() != null) {
+			testScoreEntity.setScore(ts.getScore());
+		}
+
+		TestScore resEntity = testr.save(testScoreEntity);
+
+		TestScoreDTO resdto = new TestScoreDTO();
+		StudentDTO studto = new StudentDTO();
+		SubjectDTO subdto = new SubjectDTO();
+		resdto.setId(resEntity.getId());
+		resdto.setScore(resEntity.getScore());
+		studto.setStudentId(resEntity.getStudent().getStudentId());
+		studto.setStudentName(resEntity.getStudent().getStudentName());
+		subdto.setSubjectId(resEntity.getSubject().getSubjectId());
+		subdto.setSubjectName(resEntity.getSubject().getSubjectName());
+		resdto.setStudent(studto);
+		resdto.setSubject(subdto);
+
+		return resdto;
 	}
 
 	// Student 엔티티를 StudentDTO로 변환
@@ -99,6 +179,5 @@ public class TestScoreService {
 		return subjectDTO;
 
 	}
-	
-	
+
 }

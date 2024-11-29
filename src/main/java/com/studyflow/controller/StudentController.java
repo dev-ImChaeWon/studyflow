@@ -7,14 +7,12 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -38,8 +36,20 @@ public class StudentController {
 		this.tests = tests;
 	}
 
+	// 테스트 점수 조회 API
+	@GetMapping("/api/test-score")
+	public ResponseEntity<PageResponse<TestScoreDTO>> getTestScore(
+			@RequestParam(name = "page", defaultValue = "1") int page,
+			@RequestParam(name = "size", defaultValue = "10") int size,
+			@RequestParam(name = "studentId", defaultValue = "0", required = false) Integer studentId,
+			@RequestParam(name = "subjectId", defaultValue = "0", required = false) Integer subjectId,
+			@RequestParam(name = "weeklyTestDate", required = true) Date weeklyTestDate) {
+		PageResponse<TestScoreDTO> res = tests.getTestScore(page, size, studentId, subjectId, weeklyTestDate);
+		return ResponseEntity.status(200).body(res);
+	}
+
 	// 테스트 점수 생성 API
-	@PostMapping("/api/test-create")
+	@PostMapping("/api/test-score")
 	public ResponseEntity<TestScoreDTO> createTestScore(@RequestBody TestScoreDTO testScoreDTO) {
 		try {
 			// 서비스 계층을 호출하여 점수 생성
@@ -51,6 +61,13 @@ public class StudentController {
 			// 기타 예기치 않은 예외 발생 시 500 Internal Server Error 응답
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
+	}
+
+	// 테스트 점수 수정 API
+	@PutMapping("/api/test-score/{studentId}/{subjectId}")
+	public ResponseEntity<TestScoreDTO> updateTestScore(@PathVariable(name = "studentId") int studentId,
+			@RequestBody TestScoreDTO testScore, @PathVariable(name = "subjectId") int subjectId) {
+		return ResponseEntity.ok(tests.updateTestScore(studentId, subjectId, testScore));
 	}
 
 	// 날짜별 출결 여부 조회 API
@@ -79,10 +96,11 @@ public class StudentController {
 	}
 
 	// 과목 이름으로 학생 불러오는 API
-    @GetMapping("/api/student-by-subject")
-    public List<StudentDTO> getStudentsBySubject(@RequestParam(name = "subjectId", required = false) Integer subjectId) {
-        return stus.getStudentsBySubjectName(subjectId);
-    }
+	@GetMapping("/api/student-by-subject")
+	public List<StudentDTO> getStudentsBySubject(
+			@RequestParam(name = "subjectId", required = false) Integer subjectId) {
+		return stus.getStudentsBySubjectName(subjectId);
+	}
 
 	// 학생 추가하는 API
 	@PostMapping("api/student")

@@ -8,6 +8,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 
 @Entity
 public class TestScore {
@@ -17,7 +19,7 @@ public class TestScore {
 	private Integer id;
 
 	@ManyToOne
-	@JoinColumn(name = "student_id")
+	@JoinColumn(name = "student_id", referencedColumnName = "student_id")
 	private Student student;
 
 	@ManyToOne
@@ -26,6 +28,7 @@ public class TestScore {
 
 	private Integer score;
 
+	@Temporal(TemporalType.DATE)
 	private Date weeklyTestDate;
 
 	public Integer getId() {
