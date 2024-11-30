@@ -2,6 +2,7 @@ package com.studyflow.entity;
 
 import java.util.Date;
 
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -12,13 +13,8 @@ import jakarta.persistence.ManyToOne;
 @Entity
 public class BillManagement {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
-
-	@ManyToOne
-	@JoinColumn(name = "student_subject_id")
-	private StudentSubject studentSubject;
+	@EmbeddedId
+	private BillId id;
 
 	private boolean isPay;
 
@@ -26,20 +22,12 @@ public class BillManagement {
 
 	private Integer pay;
 
-	public Integer getId() {
+	public BillId getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(BillId id) {
 		this.id = id;
-	}
-
-	public StudentSubject getStudentSubject() {
-		return studentSubject;
-	}
-
-	public void setStudentSubject(StudentSubject studentSubject) {
-		this.studentSubject = studentSubject;
 	}
 
 	public boolean isPay() {
@@ -64,6 +52,10 @@ public class BillManagement {
 
 	public void setPay(Integer pay) {
 		this.pay = pay;
+	}
+	
+	public Integer getStudentSubjectId() {
+		return id.getStudentSubjectId();
 	}
 
 }
