@@ -1,5 +1,6 @@
 package com.studyflow.service;
 
+import java.util.HashMap;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.studyflow.dto.ParentDTO;
+import com.studyflow.dto.UserDTO;
 import com.studyflow.entity.Parent;
 import com.studyflow.entity.Teacher;
 import com.studyflow.repository.ParentRepository;
@@ -28,26 +30,34 @@ public class UserService {
 		this.passwordEncoder = passwordEncoder;
 		this.teacherRepository = teacherRepository;
 	}
-    public String signIn(ParentDTO parentDTO) {
+    public HashMap<String, String> signIn(UserDTO userDTO) {
         // 로그인 로직
         // 예시로 부모 id와 비밀번호를 간단히 확인
-    	if(parentDTO.getUserRole() == 'P') {
-    		Optional<Parent> optPa =  parentRepository.findById(parentDTO.getUserId());
+    	HashMap<String, String> responseBody = new HashMap<>();
+    	
+    	if(userDTO.getUserRole() == 'P') {
+    		Optional<Parent> optPa =  parentRepository.findById(userDTO.getUserId());
     		if(optPa.isEmpty()) {
     			return null;
     		}
     		Parent p = optPa.get();
-    		if(p.getUserId().equals(parentDTO.getUserId()) && passwordEncoder.matches(parentDTO.getUserPassword(), p.getUserPassword())) {    			
-    			return JwtUtil.generateToken(parentDTO.getUserId(), parentDTO.getUserRole());
+    		if(p.getUserId().equals(userDTO.getUserId()) && passwordEncoder.matches(userDTO.getUserPassword(), p.getUserPassword())) {   
+    			responseBody.put("authToken", JwtUtil.generateToken(userDTO.getUserId(), userDTO.getUserRole()));
+    			responseBody.put("userRole", userDTO.getUserRole() + "");
+    			responseBody.put("userId", userDTO.getUserId());
+    			return responseBody;
     		}
-    	}else if(parentDTO.getUserRole() != 'P') {
-    		Optional<Teacher> optTe =  teacherRepository.findById(parentDTO.getUserId());
+    	}else if(userDTO.getUserRole() != 'P') {
+    		Optional<Teacher> optTe =  teacherRepository.findById(userDTO.getUserId());
     		if(optTe.isEmpty()) {
     			return null;
     		}
     		Teacher t = optTe.get();
-    		if(t.getUserId().equals(parentDTO.getUserId()) && passwordEncoder.matches(parentDTO.getUserPassword(), t.getUserPassword())) {    			
-    			return JwtUtil.generateToken(parentDTO.getUserId(), parentDTO.getUserRole());
+    		if(t.getUserId().equals(userDTO.getUserId()) && passwordEncoder.matches(userDTO.getUserPassword(), t.getUserPassword())) {    			
+    			responseBody.put("authToken", JwtUtil.generateToken(userDTO.getUserId(), userDTO.getUserRole()));
+    			responseBody.put("userRole", userDTO.getUserRole() + "");
+    			responseBody.put("userId", userDTO.getUserId());
+    			return responseBody;
     		}
     	}
         // 로그인 실패 시

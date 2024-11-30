@@ -1,5 +1,7 @@
 package com.studyflow.controller;
 
+import java.util.HashMap;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.studyflow.dto.ParentDTO;
+import com.studyflow.dto.UserDTO;
 import com.studyflow.service.UserService;
 
 @Controller
@@ -33,9 +36,9 @@ public class UserController {
     	return ResponseEntity.ok(userService.isDup(id, role));
     }
     @PostMapping("/api/auth/signin")
-    public ResponseEntity<String> login( @RequestBody ParentDTO parentDTO){
+    public ResponseEntity<HashMap<String, String>> login( @RequestBody UserDTO userDTO){
     	
-    	return ResponseEntity.ok(userService.signIn(parentDTO));
+    	return ResponseEntity.ok(userService.signIn(userDTO));
     }
     
 }

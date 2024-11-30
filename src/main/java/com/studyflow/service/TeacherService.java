@@ -24,7 +24,7 @@ public class TeacherService {
 	BCryptPasswordEncoder encoder;
 
 	@Autowired
-	public TeacherService(TeacherRepository tear, SubjectRepository subr) {
+	public TeacherService(TeacherRepository tear, SubjectRepository subr, BCryptPasswordEncoder encoder) {
 		this.tear = tear;
 		this.subr = subr;
 		this.encoder = encoder;
@@ -85,11 +85,13 @@ public class TeacherService {
 		if (optT.isPresent()) {
 			return null;
 		}
+		
+		String encryptedPassword = encoder.encode(t.getUserPassword());
 
 		Teacher teacherEntity = new Teacher();
 		teacherEntity.setUserId(t.getUserId());
 		teacherEntity.setUserName(t.getUserName());
-		teacherEntity.setUserPassword(t.getUserPassword());
+		teacherEntity.setUserPassword(encryptedPassword);
 		teacherEntity.setUserRole(t.getUserRole());
 
 		Teacher resEntity = tear.save(teacherEntity);
