@@ -4,43 +4,43 @@ import java.util.Date;
 
 public class BillManagementDTO {
 
-	private Integer studentSubjectId;
+	private Integer billId;
 
 	private boolean isPay;
 
-	private Date date;
+	private Date payDate;
 
 	private Integer pay;
 
-	protected Integer getStudentSubjectId() {
-		return studentSubjectId;
+	public Integer getBillId() {
+		return billId;
 	}
 
-	protected void setStudentSubjectId(Integer studentSubjectId) {
-		this.studentSubjectId = studentSubjectId;
+	public void setBillId(Integer billId) {
+		this.billId = billId;
 	}
 
-	protected boolean isPay() {
+	public boolean getIsPay() {
 		return isPay;
 	}
 
-	protected void setPay(boolean isPay) {
+	public void setIsPay(boolean isPay) {
 		this.isPay = isPay;
 	}
 
-	protected Date getDate() {
-		return date;
+	public Date getPayDate() {
+		return payDate;
 	}
 
-	protected void setDate(Date date) {
-		this.date = date;
+	public void setPayDate(Date payDate) {
+		this.payDate = payDate;
 	}
 
-	protected Integer getPay() {
+	public Integer getPay() {
 		return pay;
 	}
 
-	protected void setPay(Integer pay) {
+	public void setPay(Integer pay) {
 		this.pay = pay;
 	}
 

@@ -60,6 +60,23 @@ public class StudentService {
 
 	}
 
+	// 모든 학생 조회 메서드
+	public List<StudentDTO> getAllStudent() {
+		List<Student> studentList = stur.findAll();
+		List<StudentDTO> resList = new ArrayList<>();
+		
+		for(Student student : studentList) {
+			StudentDTO studto = new StudentDTO();
+			studto.setStudentId(student.getStudentId());
+			studto.setStudentName(student.getStudentName());
+			studto.setHomework(null);
+			studto.setSubjects(null);
+			resList.add(studto);
+		}
+		
+		return resList;
+	}
+
 	// id와 date로 해당 날짜와 해당 학생 숙제 정보 조회
 	public StudentDTO getHomeworkByIdAndDate(int id, LocalDate date) {
 		Optional<Student> res = stur.findById(id);

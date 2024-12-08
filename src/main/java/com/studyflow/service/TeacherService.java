@@ -16,6 +16,8 @@ import com.studyflow.entity.Teacher;
 import com.studyflow.repository.SubjectRepository;
 import com.studyflow.repository.TeacherRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class TeacherService {
 
@@ -104,6 +106,7 @@ public class TeacherService {
 	}
 
 	// 선생님 수정 메서드
+	@Transactional
 	public TeacherDTO updateTeacher(String userId, TeacherDTO t) {
 		Optional<Teacher> optT = tear.findById(userId);
 		// 수정하려는 teacherName이 이미 존재한다면 null을 return
@@ -139,7 +142,7 @@ public class TeacherService {
 					subdto.setSubjectId(subjectDTO.getSubjectId());
 					subdto.setSubjectName(subjectDTO.getSubjectName());
 					subdto.setTeacher(t);
-					SubjectService subs = new SubjectService(subr, tear, null, null);
+					SubjectService subs = new SubjectService(subr, tear, null, null, null);
 					subs.updateSubject(subdto.getSubjectId(), subdto);
 				}
 			}

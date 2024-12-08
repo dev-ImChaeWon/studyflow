@@ -3,33 +3,33 @@ package com.studyflow.entity;
 import java.io.Serializable;
 import java.util.Objects;
 
-import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 
+@Embeddable
 public class BillId implements Serializable {
 
-	@Column(name = "student_subject_id")
-	private Integer studentSubjectId;
+	private Integer billId;
+
+	public Integer getBillId() {
+		return billId;
+	}
+
+	public void setBillId(Integer billId) {
+		this.billId = billId;
+	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof BillId) {
-			BillId tmp = (BillId) obj;
-			return this.studentSubjectId == tmp.studentSubjectId;
-		}
-		return false;
+		if (this == obj)
+			return true;
+		if (obj == null || getClass() != obj.getClass())
+			return false;
+		BillId that = (BillId) obj;
+		return Objects.equals(billId, that.billId);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(this.studentSubjectId);
+		return Objects.hash(billId);
 	}
-
-	public Integer getStudentSubjectId() {
-		return studentSubjectId;
-	}
-
-	public void setStudentSubjectId(Integer studentSubjectId) {
-		this.studentSubjectId = studentSubjectId;
-	}
-
 }

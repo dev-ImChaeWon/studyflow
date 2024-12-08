@@ -7,4 +7,5 @@ import com.studyflow.entity.BillManagement;
 
 public interface BillManagementRepository extends JpaRepository<BillManagement, BillId>{
 	
+	void deleteByStudentSubject_Subject_subjectId(int subjectId);
 }

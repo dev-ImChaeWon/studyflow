@@ -1,4 +1,4 @@
-package com.studyflow.entity;
+ package com.studyflow.entity;
 
 import java.io.Serializable;
 import java.util.Date;

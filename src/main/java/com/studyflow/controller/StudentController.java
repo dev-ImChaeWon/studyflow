@@ -79,6 +79,14 @@ public class StudentController {
 		return ResponseEntity.status(200).body(res);
 	}
 
+	// 모든 학생 조회 API
+	@GetMapping("/api/all-student")
+	public ResponseEntity<List<StudentDTO>> getAllStudent() {
+		List<StudentDTO> res = stus.getAllStudent();
+		
+		return ResponseEntity.status(200).body(res);
+	}
+
 	// 파라미터로 조건에 맞는 학생과 해당 학생의 숙제 목록 조회 API
 	@GetMapping("/api/student")
 	public ResponseEntity<PageResponse<StudentDTO>> getStudent2(

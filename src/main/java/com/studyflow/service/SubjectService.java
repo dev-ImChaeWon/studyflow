@@ -16,6 +16,7 @@ import com.studyflow.entity.Student;
 import com.studyflow.entity.StudentSubject;
 import com.studyflow.entity.Subject;
 import com.studyflow.entity.Teacher;
+import com.studyflow.repository.BillManagementRepository;
 import com.studyflow.repository.HomeworkRepository;
 import com.studyflow.repository.StudentSubjectRepository;
 import com.studyflow.repository.SubjectRepository;
@@ -30,16 +31,36 @@ public class SubjectService {
 	TeacherRepository tear;
 	HomeworkRepository homr;
 	StudentSubjectRepository stusubr;
+	BillManagementRepository bilr;
 
 	@Autowired
 	public SubjectService(SubjectRepository subr, TeacherRepository tear, HomeworkRepository homr,
-			StudentSubjectRepository stusubr) {
+			StudentSubjectRepository stusubr, BillManagementRepository bilr) {
 		this.subr = subr;
 		this.tear = tear;
 		this.homr = homr;
 		this.stusubr = stusubr;
+		this.bilr = bilr;
 	}
-
+	
+	// 학생 id, 과목 id로 학생-과목 객체 가져오는 API
+	public StudentSubjectDTO getStudentSubjectByStudentIdAndSubjectId(Integer studentId, Integer subjectId) {
+		Optional<StudentSubject> optStudentSubject = stusubr.findByStudent_studentIdAndSubject_subjectId(studentId, subjectId);
+		
+		if(!optStudentSubject.isPresent()) {
+			return null;
+		}
+		
+		StudentSubject studentSubject = optStudentSubject.get();
+		StudentSubjectDTO stusubdto = new StudentSubjectDTO();
+		
+		stusubdto.setId(studentSubject.getId());
+		stusubdto.setStudent(null);
+		stusubdto.setSubject(null);
+		
+		return stusubdto;
+	}
+	
 	// 과목 수정 메소드
 	public SubjectDTO updateSubject(int subjectId, SubjectDTO s) {
 		Optional<Subject> optS = subr.findById(subjectId);
@@ -125,23 +146,31 @@ public class SubjectService {
 	// 학생 id로 과목 가져오는 메소드
 	public List<SubjectDTO> getSubjectsByStudentId(Integer studentId) {
 		List<Subject> subjects = subr.findSubjectsByStudentId(studentId);
-		return subjects.stream().map(subject -> {
-			SubjectDTO dto = new SubjectDTO();
-			dto.setSubjectId(subject.getSubjectId());
-			dto.setSubjectName(subject.getSubjectName());
-			return dto;
-		}).collect(Collectors.toList());
+		List<SubjectDTO> res = new ArrayList<>();
+		
+		for(Subject s : subjects) {
+			SubjectDTO subdto = new SubjectDTO();
+			subdto.setSubjectId(s.getSubjectId());
+			subdto.setSubjectName(s.getSubjectName());
+			subdto.setHomework(null);
+			subdto.setTeacher(null);
+			res.add(subdto);
+		}
+		
+		return res;
 	}
 
 	// 과목 id로 해당 과목 삭제하는 메소드
+	@Transactional
 	public boolean deleteSubject(int subjectId) {
 		Optional<Subject> optS = subr.findById(subjectId);
 		if (!optS.isPresent()) {
 			return false;
 		}
 
+		bilr.deleteByStudentSubject_Subject_subjectId(subjectId);
+		stusubr.deleteBySubject_subjectId(subjectId);
 		homr.deleteBySubject_subjectId(subjectId);
-
 		subr.deleteById(subjectId);
 
 		return true;
@@ -152,15 +181,15 @@ public class SubjectService {
 		// 프론트에서 받아온 subjectName으로 subjectId 찾기
 		String subjectName = ss.getSubject().getSubjectName();
 		Optional<Subject> optS = subr.findBySubjectName(subjectName);
-		
-	    if (!optS.isPresent()) {
-	        throw new IllegalArgumentException("Subject with name '" + subjectName + "' does not exist.");
-	    }
-	    
+
+		if (!optS.isPresent()) {
+			throw new IllegalArgumentException("Subject with name '" + subjectName + "' does not exist.");
+		}
+
 		int subjectId = optS.get().getSubjectId();
-		
-		Optional<StudentSubject> optSS = stusubr.findByStudent_studentIdAndSubject_subjectId(
-				ss.getStudent().getStudentId(), subjectId);
+
+		Optional<StudentSubject> optSS = stusubr
+				.findByStudent_studentIdAndSubject_subjectId(ss.getStudent().getStudentId(), subjectId);
 		if (optSS.isPresent()) {
 			throw new IllegalArgumentException("Student is already enrolled in the subject: " + subjectName);
 		}
