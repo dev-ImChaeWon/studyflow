@@ -34,6 +34,7 @@ import com.studyflow.entity.StudentSubject;
 import com.studyflow.entity.Subject;
 import com.studyflow.repository.AttendanceRepository;
 import com.studyflow.repository.HomeworkRepository;
+import com.studyflow.repository.ParentRepository;
 import com.studyflow.repository.StudentParentRepository;
 import com.studyflow.repository.StudentRepository;
 import com.studyflow.repository.StudentSubjectRepository;
@@ -48,6 +49,7 @@ public class StudentService {
 
 	TeacherRepository tear;
 	StudentRepository stur;
+	ParentRepository parr;
 	HomeworkRepository homr;
 	AttendanceRepository attr;
 	SubjectRepository subr;
@@ -55,28 +57,30 @@ public class StudentService {
 	StudentParentRepository stuparr;
 
 	@Autowired
-	public StudentService(TeacherRepository tear, StudentRepository stur, HomeworkRepository homr,
-			AttendanceRepository attr, SubjectRepository subr, StudentSubjectRepository stusubr,
-			StudentParentRepository stuparr) {
+	public StudentService(TeacherRepository tear, StudentRepository stur, ParentRepository parr,
+			HomeworkRepository homr, AttendanceRepository attr, SubjectRepository subr,
+			StudentSubjectRepository stusubr, StudentParentRepository stuparr) {
 		this.tear = tear;
 		this.stur = stur;
+		this.parr = parr;
 		this.homr = homr;
 		this.attr = attr;
 		this.subr = subr;
 		this.stusubr = stusubr;
 		this.stuparr = stuparr;
 	}
-	
+
 	// 학생-부모 객체 생성 메서드
 	public StudentParentDTO createStudentParent(StudentParentDTO studentParentDTO) {
 		StudentParent studentParent = new StudentParent();
-		Parent parent = new Parent();
-		Student student = new Student();
-		parent.setUserId(studentParentDTO.getParent().getUserId());
+		Parent parent = parr.findById(studentParentDTO.getParent().getUserId())
+				.orElseThrow(() -> new IllegalArgumentException("Parent not found"));
+		Student student = stur.findById(studentParentDTO.getStudent().getStudentId())
+				.orElseThrow(() -> new IllegalArgumentException("Student not found"));
 		student.setStudentId(studentParentDTO.getStudent().getStudentId());
 		studentParent.setParent(parent);
 		studentParent.setStudent(student);
-		
+
 		StudentParent resEntity = stuparr.save(studentParent);
 		StudentParentDTO resdto = new StudentParentDTO();
 		ParentDTO pardto = new ParentDTO();
@@ -86,24 +90,24 @@ public class StudentService {
 		resdto.setId(resEntity.getId());
 		resdto.setParent(pardto);
 		resdto.setStudent(studto);
-		
+
 		return resdto;
 	}
 
 	// 부모 id로 학생 id 조회 API
 	public StudentDTO getStudentByParentId(String parentId) {
 		Optional<StudentParent> optStudentParent = stuparr.findByParent_userId(parentId);
-		
-		if(!optStudentParent.isPresent()) {
+
+		if (!optStudentParent.isPresent()) {
 			return null;
 		}
-		
+
 		StudentParent studentParent = optStudentParent.get();
 		StudentDTO studto = new StudentDTO();
-		
+
 		studto.setStudentId(studentParent.getStudent().getStudentId());
 		studto.setStudentName(studentParent.getStudent().getStudentName());
-		
+
 		return studto;
 	}
 
