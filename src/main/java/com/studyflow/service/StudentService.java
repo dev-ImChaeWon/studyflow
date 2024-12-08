@@ -20,16 +20,21 @@ import org.springframework.stereotype.Service;
 
 import com.studyflow.dto.AttendanceDTO;
 import com.studyflow.dto.HomeworkDTO;
+import com.studyflow.dto.ParentDTO;
 import com.studyflow.dto.StudentDTO;
+import com.studyflow.dto.StudentParentDTO;
 import com.studyflow.dto.StudentSubjectDTO;
 import com.studyflow.dto.SubjectDTO;
 import com.studyflow.entity.Attendance;
 import com.studyflow.entity.Homework;
+import com.studyflow.entity.Parent;
 import com.studyflow.entity.Student;
+import com.studyflow.entity.StudentParent;
 import com.studyflow.entity.StudentSubject;
 import com.studyflow.entity.Subject;
 import com.studyflow.repository.AttendanceRepository;
 import com.studyflow.repository.HomeworkRepository;
+import com.studyflow.repository.StudentParentRepository;
 import com.studyflow.repository.StudentRepository;
 import com.studyflow.repository.StudentSubjectRepository;
 import com.studyflow.repository.SubjectRepository;
@@ -47,25 +52,67 @@ public class StudentService {
 	AttendanceRepository attr;
 	SubjectRepository subr;
 	StudentSubjectRepository stusubr;
+	StudentParentRepository stuparr;
 
 	@Autowired
 	public StudentService(TeacherRepository tear, StudentRepository stur, HomeworkRepository homr,
-			AttendanceRepository attr, SubjectRepository subr, StudentSubjectRepository stusubr) {
+			AttendanceRepository attr, SubjectRepository subr, StudentSubjectRepository stusubr,
+			StudentParentRepository stuparr) {
 		this.tear = tear;
 		this.stur = stur;
 		this.homr = homr;
 		this.attr = attr;
 		this.subr = subr;
 		this.stusubr = stusubr;
+		this.stuparr = stuparr;
+	}
+	
+	// 학생-부모 객체 생성 메서드
+	public StudentParentDTO createStudentParent(StudentParentDTO studentParentDTO) {
+		StudentParent studentParent = new StudentParent();
+		Parent parent = new Parent();
+		Student student = new Student();
+		parent.setUserId(studentParentDTO.getParent().getUserId());
+		student.setStudentId(studentParentDTO.getStudent().getStudentId());
+		studentParent.setParent(parent);
+		studentParent.setStudent(student);
+		
+		StudentParent resEntity = stuparr.save(studentParent);
+		StudentParentDTO resdto = new StudentParentDTO();
+		ParentDTO pardto = new ParentDTO();
+		StudentDTO studto = new StudentDTO();
+		pardto.setUserId(resEntity.getParent().getUserId());
+		studto.setStudentId(resEntity.getStudent().getStudentId());
+		resdto.setId(resEntity.getId());
+		resdto.setParent(pardto);
+		resdto.setStudent(studto);
+		
+		return resdto;
+	}
 
+	// 부모 id로 학생 id 조회 API
+	public StudentDTO getStudentByParentId(String parentId) {
+		Optional<StudentParent> optStudentParent = stuparr.findByParent_userId(parentId);
+		
+		if(!optStudentParent.isPresent()) {
+			return null;
+		}
+		
+		StudentParent studentParent = optStudentParent.get();
+		StudentDTO studto = new StudentDTO();
+		
+		studto.setStudentId(studentParent.getStudent().getStudentId());
+		studto.setStudentName(studentParent.getStudent().getStudentName());
+		
+		return studto;
 	}
 
 	// 모든 학생 조회 메서드
 	public List<StudentDTO> getAllStudent() {
 		List<Student> studentList = stur.findAll();
 		List<StudentDTO> resList = new ArrayList<>();
-		
-		for(Student student : studentList) {
+
+		for (Student student : studentList) {
 			StudentDTO studto = new StudentDTO();
 			studto.setStudentId(student.getStudentId());
 			studto.setStudentName(student.getStudentName());
@@ -73,7 +120,7 @@ public class StudentService {
 			studto.setSubjects(null);
 			resList.add(studto);
 		}
-		
+
 		return resList;
 	}
 

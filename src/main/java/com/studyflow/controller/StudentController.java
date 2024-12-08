@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.studyflow.dto.AttendanceDTO;
 import com.studyflow.dto.StudentDTO;
+import com.studyflow.dto.StudentParentDTO;
 import com.studyflow.dto.TestScoreDTO;
 import com.studyflow.response.PageResponse;
 import com.studyflow.service.StudentService;
@@ -34,6 +35,19 @@ public class StudentController {
 	public StudentController(StudentService stus, TestScoreService tests) {
 		this.stus = stus;
 		this.tests = tests;
+	}
+
+	// 부모-학생 객체 등록 API
+	@PostMapping("/api/parent-student")
+	public ResponseEntity<StudentParentDTO> createStudentParent(@RequestBody StudentParentDTO studentParentDTO) {
+		return ResponseEntity.ok(stus.createStudentParent(studentParentDTO));
+	}
+
+	// 부모 id로 학생 id 조회 API
+	@GetMapping("/api/parent-student")
+	public ResponseEntity<StudentDTO> getStudentByParentId(@RequestParam(name = "parentId") String parentId) {
+		StudentDTO res = stus.getStudentByParentId(parentId);
+		return ResponseEntity.status(200).body(res);
 	}
 
 	// 테스트 점수 조회 API
@@ -83,7 +97,7 @@ public class StudentController {
 	@GetMapping("/api/all-student")
 	public ResponseEntity<List<StudentDTO>> getAllStudent() {
 		List<StudentDTO> res = stus.getAllStudent();
-		
+
 		return ResponseEntity.status(200).body(res);
 	}
 
