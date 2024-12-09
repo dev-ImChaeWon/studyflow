@@ -18,6 +18,7 @@ import com.studyflow.entity.Subject;
 import com.studyflow.entity.Teacher;
 import com.studyflow.repository.BillManagementRepository;
 import com.studyflow.repository.HomeworkRepository;
+import com.studyflow.repository.StudentRepository;
 import com.studyflow.repository.StudentSubjectRepository;
 import com.studyflow.repository.SubjectRepository;
 import com.studyflow.repository.TeacherRepository;
@@ -28,39 +29,67 @@ import jakarta.transaction.Transactional;
 public class SubjectService {
 
 	SubjectRepository subr;
+	StudentRepository stur;
 	TeacherRepository tear;
 	HomeworkRepository homr;
 	StudentSubjectRepository stusubr;
 	BillManagementRepository bilr;
 
 	@Autowired
-	public SubjectService(SubjectRepository subr, TeacherRepository tear, HomeworkRepository homr,
-			StudentSubjectRepository stusubr, BillManagementRepository bilr) {
+	public SubjectService(SubjectRepository subr, StudentRepository stur, TeacherRepository tear,
+			HomeworkRepository homr, StudentSubjectRepository stusubr, BillManagementRepository bilr) {
 		this.subr = subr;
+		this.stur = stur;
 		this.tear = tear;
 		this.homr = homr;
 		this.stusubr = stusubr;
 		this.bilr = bilr;
 	}
-	
-	// 학생 id, 과목 id로 학생-과목 객체 가져오는 API
-	public StudentSubjectDTO getStudentSubjectByStudentIdAndSubjectId(Integer studentId, Integer subjectId) {
-		Optional<StudentSubject> optStudentSubject = stusubr.findByStudent_studentIdAndSubject_subjectId(studentId, subjectId);
-		
-		if(!optStudentSubject.isPresent()) {
+
+	// id로 학생-과목 객체 가져오는 메서드
+	public StudentSubjectDTO getStudentSubjectById(Integer id) {
+		Optional<StudentSubject> optStudentSubject = stusubr.findById(id);
+
+		if (!optStudentSubject.isPresent()) {
 			return null;
 		}
-		
+
+		StudentSubject studentSubject = optStudentSubject.get();
+		Student student = stur.findById(studentSubject.getStudent().getStudentId()).get();
+		Subject subject = subr.findById(studentSubject.getSubject().getSubjectId()).get();
+		StudentSubjectDTO stusubdto = new StudentSubjectDTO();
+		StudentDTO studto = new StudentDTO();
+		SubjectDTO subdto = new SubjectDTO();
+		studto.setStudentId(student.getStudentId());
+		studto.setStudentName(student.getStudentName());
+		subdto.setSubjectId(subject.getSubjectId());
+		subdto.setSubjectName(subject.getSubjectName());
+		stusubdto.setId(id);
+		stusubdto.setStudent(studto);
+		stusubdto.setSubject(subdto);
+
+		return stusubdto;
+	}
+
+	// 학생 id, 과목 id로 학생-과목 객체 가져오는 메서드
+	public StudentSubjectDTO getStudentSubjectByStudentIdAndSubjectId(Integer studentId, Integer subjectId) {
+		Optional<StudentSubject> optStudentSubject = stusubr.findByStudent_studentIdAndSubject_subjectId(studentId,
+				subjectId);
+
+		if (!optStudentSubject.isPresent()) {
+			return null;
+		}
+
 		StudentSubject studentSubject = optStudentSubject.get();
 		StudentSubjectDTO stusubdto = new StudentSubjectDTO();
-		
+
 		stusubdto.setId(studentSubject.getId());
 		stusubdto.setStudent(null);
 		stusubdto.setSubject(null);
-		
+
 		return stusubdto;
 	}
-	
+
 	// 과목 수정 메소드
 	public SubjectDTO updateSubject(int subjectId, SubjectDTO s) {
 		Optional<Subject> optS = subr.findById(subjectId);
@@ -147,8 +176,8 @@ public class SubjectService {
 	public List<SubjectDTO> getSubjectsByStudentId(Integer studentId) {
 		List<Subject> subjects = subr.findSubjectsByStudentId(studentId);
 		List<SubjectDTO> res = new ArrayList<>();
-		
-		for(Subject s : subjects) {
+
+		for (Subject s : subjects) {
 			SubjectDTO subdto = new SubjectDTO();
 			subdto.setSubjectId(s.getSubjectId());
 			subdto.setSubjectName(s.getSubjectName());
@@ -156,7 +185,7 @@ public class SubjectService {
 			subdto.setTeacher(null);
 			res.add(subdto);
 		}
-		
+
 		return res;
 	}
 

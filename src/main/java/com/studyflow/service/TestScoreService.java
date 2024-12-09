@@ -35,51 +35,75 @@ public class TestScoreService {
 		this.subr = subr;
 		this.testr = testr;
 	}
-	
+
+	// 학생 id, 과목 id로 주간평가 조회 메서드
+	public List<TestScoreDTO> findAllTestScoreByStudentIdAndSubjectId(Integer studentId, Integer subjectId) {
+		List<TestScore> testScoreList = testr.findAllByStudent_studentIdAndSubject_subjectId(studentId, subjectId);
+		
+		if(testScoreList.isEmpty()) {
+			return null;
+		}
+		
+		List<TestScoreDTO> res = new ArrayList<>();
+		
+		for(TestScore ts : testScoreList) {
+			TestScoreDTO tesdto = new TestScoreDTO();
+			StudentDTO studto = convertToStudentDTO(ts.getStudent());
+			SubjectDTO subdto = convertToSubjectDTO(ts.getSubject());
+			tesdto.setId(ts.getId());
+			tesdto.setStudent(studto);
+			tesdto.setSubject(subdto);
+			tesdto.setScore(ts.getScore());
+			tesdto.setWeeklyTestDate(ts.getWeeklyTestDate());
+			res.add(tesdto);
+		}
+		
+		return res;
+	}
+
 	// 테스트 점수 조회 메서드
-	public PageResponse<TestScoreDTO> getTestScore(int page, int size, int studentId, int subjectId, Date weeklyTestDate) {
-	    // 기본 정렬 조건 설정
-	    PageRequest pr = PageRequest.of(page - 1, size, Sort.by(Sort.Order.asc("student.studentId")));
-	    
-	    // weeklyTestDate 기본값 설정
-	    if (weeklyTestDate == null) {
-	        weeklyTestDate = new Date();
-	    }
+	public PageResponse<TestScoreDTO> getTestScore(int page, int size, int studentId, int subjectId,
+			Date weeklyTestDate) {
+		// 기본 정렬 조건 설정
+		PageRequest pr = PageRequest.of(page - 1, size, Sort.by(Sort.Order.asc("student.studentId")));
 
-	    Page<TestScore> res;
-	    
-	    if (studentId == 0 && subjectId == 0) {
-	        res = testr.findByWeeklyTestDate(weeklyTestDate, pr);
-	    } else if (studentId == 0) {
-	        res = testr.findByWeeklyTestDateAndSubjectId(weeklyTestDate, subjectId, pr);
-	    } else if (subjectId == 0) {
-	        res = testr.findByWeeklyTestDateAndStudentId(weeklyTestDate, studentId, pr);
-	    } else {
-	        res = testr.findByWeeklyTestDateAndStudentIdAndSubjectId(weeklyTestDate, studentId, subjectId, pr);
-	    }
+		// weeklyTestDate 기본값 설정
+		if (weeklyTestDate == null) {
+			weeklyTestDate = new Date();
+		}
 
-	    List<TestScoreDTO> li = res.stream()
-	        .map(testScore -> {
-	            TestScoreDTO dto = new TestScoreDTO();
-	            dto.setId(testScore.getId());
-	            dto.setScore(testScore.getScore());
-	            dto.setWeeklyTestDate(testScore.getWeeklyTestDate());
-	            dto.setStudent(convertToStudentDTO(testScore.getStudent()));
-	            dto.setSubject(convertToSubjectDTO(testScore.getSubject()));
-	            return dto;
-	        })
-	        .toList();
+		Page<TestScore> res;
 
-	    // PageResponse 생성 및 반환
-	    PageResponse<TestScoreDTO> testScorePage = new PageResponse<>();
-	    testScorePage.setList(li);
-	    testScorePage.setCurrentPage(page);
-	    testScorePage.setHasNext(page < res.getTotalPages());
-	    testScorePage.setHasPrevieous(page > 1);
-	    testScorePage.setTotalElements(res.getTotalElements());
-	    testScorePage.setTotalPages(res.getTotalPages());
-	    
-	    return testScorePage;
+		if (studentId == 0 && subjectId == 0) {
+			res = testr.findByWeeklyTestDate(weeklyTestDate, pr);
+		} else if (studentId == 0) {
+			res = testr.findByWeeklyTestDateAndSubjectId(weeklyTestDate, subjectId, pr);
+		} else if (subjectId == 0) {
+			res = testr.findByWeeklyTestDateAndStudentId(weeklyTestDate, studentId, pr);
+		} else {
+			res = testr.findByWeeklyTestDateAndStudentIdAndSubjectId(weeklyTestDate, studentId, subjectId, pr);
+		}
+
+		List<TestScoreDTO> li = res.stream().map(testScore -> {
+			TestScoreDTO dto = new TestScoreDTO();
+			dto.setId(testScore.getId());
+			dto.setScore(testScore.getScore());
+			dto.setWeeklyTestDate(testScore.getWeeklyTestDate());
+			dto.setStudent(convertToStudentDTO(testScore.getStudent()));
+			dto.setSubject(convertToSubjectDTO(testScore.getSubject()));
+			return dto;
+		}).toList();
+
+		// PageResponse 생성 및 반환
+		PageResponse<TestScoreDTO> testScorePage = new PageResponse<>();
+		testScorePage.setList(li);
+		testScorePage.setCurrentPage(page);
+		testScorePage.setHasNext(page < res.getTotalPages());
+		testScorePage.setHasPrevieous(page > 1);
+		testScorePage.setTotalElements(res.getTotalElements());
+		testScorePage.setTotalPages(res.getTotalPages());
+
+		return testScorePage;
 	}
 
 	// 테스트 점수 생성 메서드
