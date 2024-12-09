@@ -1,6 +1,7 @@
 package com.studyflow.repository;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -14,6 +15,8 @@ import com.studyflow.entity.TestScore;
 public interface TestScoreRepository extends JpaRepository<TestScore, Integer>{
 
 	Optional<TestScore> findByStudent_studentIdAndSubject_subjectId(int studentId, int subjectId);
+	
+	List<TestScore> findAllByStudent_studentIdAndSubject_subjectId(Integer studentId, Integer subjectId);
 	
 	// 주간 테스트 날짜로 검색
     @Query("SELECT t FROM TestScore t WHERE t.weeklyTestDate = :weeklyTestDate")

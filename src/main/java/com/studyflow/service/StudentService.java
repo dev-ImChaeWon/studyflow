@@ -77,7 +77,6 @@ public class StudentService {
 				.orElseThrow(() -> new IllegalArgumentException("Parent not found"));
 		Student student = stur.findById(studentParentDTO.getStudent().getStudentId())
 				.orElseThrow(() -> new IllegalArgumentException("Student not found"));
-		student.setStudentId(studentParentDTO.getStudent().getStudentId());
 		studentParent.setParent(parent);
 		studentParent.setStudent(student);
 

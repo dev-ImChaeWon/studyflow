@@ -28,6 +28,13 @@ public class SubjectController {
 		this.subs = subs;
 	}
 
+	// id로 학생-과목 객체 가져오는 API
+	@GetMapping("/api/student-subject/{id}")
+	public ResponseEntity<StudentSubjectDTO> getStudetSubject(@PathVariable("id") Integer id) {
+		StudentSubjectDTO res = subs.getStudentSubjectById(id);
+		return ResponseEntity.status(200).body(res);
+	}
+
 	// 과목 이름 리스트 가져오는 API
 	@GetMapping("/api/subject")
 	public ResponseEntity<List<SubjectDTO>> getSubjectName() {
@@ -57,7 +64,7 @@ public class SubjectController {
 	public ResponseEntity<StudentSubjectDTO> getStudentSubjectByStudentIdAndSubjectId(
 			@PathVariable("studentId") Integer studentId, @PathVariable("subjectId") Integer subjectId) {
 		StudentSubjectDTO res = subs.getStudentSubjectByStudentIdAndSubjectId(studentId, subjectId);
-		
+
 		return ResponseEntity.status(200).body(res);
 	}
 

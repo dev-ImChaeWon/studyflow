@@ -50,7 +50,15 @@ public class StudentController {
 		return ResponseEntity.status(200).body(res);
 	}
 
-	// 테스트 점수 조회 API
+	// 학생 id, 과목 id 로 주간평가 리스트 조회 API
+	@GetMapping("/api/all-test-score/{studentId}/{subjectId}")
+	public ResponseEntity<List<TestScoreDTO>> findAllTestScore(@PathVariable(name = "studentId") Integer studentId,
+			@PathVariable(name = "subjectId") Integer subjectId) {
+		List<TestScoreDTO> res = tests.findAllTestScoreByStudentIdAndSubjectId(studentId, subjectId);
+		return ResponseEntity.status(200).body(res);
+	}
+
+	// 주간평가 조회 API
 	@GetMapping("/api/test-score")
 	public ResponseEntity<PageResponse<TestScoreDTO>> getTestScore(
 			@RequestParam(name = "page", defaultValue = "1") int page,
