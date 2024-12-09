@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.studyflow.dto.AttendanceDTO;
 import com.studyflow.dto.StudentDTO;
 import com.studyflow.dto.StudentParentDTO;
+import com.studyflow.dto.StudentSubjectDTO;
 import com.studyflow.dto.TestScoreDTO;
 import com.studyflow.response.PageResponse;
 import com.studyflow.service.StudentService;
@@ -35,6 +36,13 @@ public class StudentController {
 	public StudentController(StudentService stus, TestScoreService tests) {
 		this.stus = stus;
 		this.tests = tests;
+	}
+	
+	// 부모의 id로 자녀와 자녀정보 가져오기 API
+	@GetMapping("/api/parent-student-info")
+	public List<StudentSubjectDTO> getParentStudentInfo(
+			@RequestParam(name = "parentId") String parentId){
+		return stus.getParentStudentInfo(parentId);
 	}
 
 	// 부모-학생 객체 등록 API

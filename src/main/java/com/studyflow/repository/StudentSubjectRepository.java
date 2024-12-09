@@ -23,4 +23,6 @@ public interface StudentSubjectRepository extends JpaRepository<StudentSubject, 
 	void deleteBySubject_subjectId(int subjectId);
 
 	public Optional<StudentSubject> findByStudent_studentIdAndSubject_subjectId(Integer studentId, Integer subjectId);
+	
+	List<StudentSubject> findAllByStudent_studentId(Integer studentId);
 }
