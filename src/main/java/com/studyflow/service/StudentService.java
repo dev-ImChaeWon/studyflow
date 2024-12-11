@@ -116,11 +116,21 @@ public class StudentService {
 		List<StudentDTO> resList = new ArrayList<>();
 
 		for (Student student : studentList) {
+			List<StudentSubject> studentSubjectList = stusubr.findAllByStudent_studentId(student.getStudentId());
+			List<SubjectDTO> subdtoList = new ArrayList<>();
 			StudentDTO studto = new StudentDTO();
 			studto.setStudentId(student.getStudentId());
 			studto.setStudentName(student.getStudentName());
 			studto.setHomework(null);
-			studto.setSubjects(null);
+			for(StudentSubject ss : studentSubjectList) {
+				if(ss.getStudent().getStudentId() == student.getStudentId()) {
+					SubjectDTO subdto = new SubjectDTO();
+					subdto.setSubjectId(ss.getSubject().getSubjectId());
+					subdto.setSubjectName(ss.getSubject().getSubjectName());
+					subdtoList.add(subdto);
+				}
+			}
+			studto.setSubjects(subdtoList);
 			resList.add(studto);
 		}
 
@@ -730,40 +740,40 @@ public class StudentService {
 
 		return resdto;
 	}
-	
+
 	// 학생 id로 StudentSubject 조회
-	public List<StudentSubjectDTO> getParentStudentInfo(String parentId){
-		if(parentId == null || parentId.equals("")) {
+	public List<StudentSubjectDTO> getParentStudentInfo(String parentId) {
+		if (parentId == null || parentId.equals("")) {
 			return null;
 		}
-		//결과를 담아줄 리스트 
+		// 결과를 담아줄 리스트
 		List<StudentSubjectDTO> res = new ArrayList<>();
-		
+
 		// 1. 부모에 해당하는 자식 정보 찾기 select * from student_parent where parent_id = ?;
 		List<StudentParent> childs = stuparr.findAllByParent_userId(parentId);
-		for(StudentParent c : childs) {
-			
+		for (StudentParent c : childs) {
+
 			List<StudentSubject> studentSubjects = stusubr.findAllByStudent_studentId(c.getStudent().getStudentId());
-			for(StudentSubject ss : studentSubjects) {
+			for (StudentSubject ss : studentSubjects) {
 				StudentSubjectDTO ssdto = new StudentSubjectDTO();
 				StudentDTO sdto = new StudentDTO();
 				SubjectDTO subdto = new SubjectDTO();
 				ssdto.setId(ss.getId());
-				
+
 				sdto.setStudentId(ss.getStudent().getStudentId());
 				sdto.setStudentName(ss.getStudent().getStudentName());
 				ssdto.setStudent(sdto);
-				
+
 				subdto.setSubjectId(ss.getSubject().getSubjectId());
 				subdto.setSubjectName(ss.getSubject().getSubjectName());
-				
+
 				ssdto.setSubject(subdto);
 				res.add(ssdto);
 			}
 		}
-		
+
 		return res;
-		
+
 	}
 
 	// 과목으로 학생 리스트 가져오기
