@@ -8,9 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.studyflow.dto.BillManagementDTO;
-import com.studyflow.entity.BillId;
 import com.studyflow.entity.BillManagement;
-import com.studyflow.entity.StudentSubject;
 import com.studyflow.repository.BillManagementRepository;
 
 import jakarta.transaction.Transactional;
@@ -25,14 +23,35 @@ public class BillManagementService {
 		this.bilr = bilr;
 	}
 
-	// 수납 정보 가져오는 메서드
+	// 학생-과목 id로 수납 정보 가져오는 메서드
+    public BillManagementDTO getBillManagementById(Integer id) {
+        Optional<BillManagement> billManagement = bilr.findById(id);
+        if (billManagement.isPresent()) {
+            return convertToDTO(billManagement.get());
+        } else {
+            // 예외 처리나 null 반환을 할 수 있습니다. 예시로 null을 반환.
+            return null;
+        }
+    }
+
+    // BillManagement -> BillManagementDTO
+    private BillManagementDTO convertToDTO(BillManagement billManagement) {
+        BillManagementDTO dto = new BillManagementDTO();
+        dto.setBillId(billManagement.getBillId());
+        dto.setPay(billManagement.getPay());
+        dto.setIsPay(billManagement.getIsPay());
+        dto.setPayDate(billManagement.getPayDate());
+        return dto;
+    }
+
+	// 모든 수납 정보 가져오는 메서드
 	public List<BillManagementDTO> getBillManagement() {
 		List<BillManagement> billList = bilr.findAll();
 		List<BillManagementDTO> billDTOList = new ArrayList<>();
 
 		for (BillManagement bm : billList) {
 			BillManagementDTO billDTO = new BillManagementDTO();
-			billDTO.setBillId(bm.getId().getBillId());
+			billDTO.setBillId(bm.getBillId());
 			billDTO.setPayDate(bm.getPayDate());
 			billDTO.setIsPay(bm.getIsPay());
 			billDTO.setPay(bm.getPay());
@@ -45,9 +64,7 @@ public class BillManagementService {
 	// 수납 정보 생성 및 수정 메서드
 	@Transactional
 	public BillManagementDTO updateBillManagement(BillManagementDTO billDTO) {
-		BillId billId = new BillId();
-		billId.setBillId(billDTO.getBillId());
-		Optional<BillManagement> optionalBillManagement = bilr.findById(billId);
+		Optional<BillManagement> optionalBillManagement = bilr.findById(billDTO.getBillId());
 		BillManagement billManagement;
 
 		if (optionalBillManagement.isPresent()) {
@@ -57,7 +74,7 @@ public class BillManagementService {
 			billManagement.setPayDate(billDTO.getPayDate());
 		} else {
 			billManagement = new BillManagement();
-			billManagement.setId(billId);
+			billManagement.setBillId(billDTO.getBillId());
 			billManagement.setIsPay(billDTO.getIsPay());
 			billManagement.setPay(billDTO.getPay());
 			billManagement.setPayDate(billDTO.getPayDate());

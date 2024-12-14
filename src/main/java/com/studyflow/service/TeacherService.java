@@ -142,7 +142,7 @@ public class TeacherService {
 					subdto.setSubjectId(subjectDTO.getSubjectId());
 					subdto.setSubjectName(subjectDTO.getSubjectName());
 					subdto.setTeacher(t);
-					SubjectService subs = new SubjectService(subr, tear, null, null, null);
+					SubjectService subs = new SubjectService(subr, null, tear, null, null, null);
 					subs.updateSubject(subdto.getSubjectId(), subdto);
 				}
 			}
