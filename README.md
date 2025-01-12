@@ -1,8 +1,6 @@
 ## 프로젝트 소개
 학원 학생들의 효율적인 학습 관리와 성과 향상을 위한 통합 관리 시스템입니다. 출결 관리부터 성적 관리까지 원스톱 솔루션을 제공합니다.
 
-<br>
-
 ## 기술 스택 및 도구
 ![Java](https://img.shields.io/badge/Java-007396?style=flat-square&logo=java&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-6DB33F?style=flat-square&logo=spring-boot&logoColor=white)
@@ -13,7 +11,9 @@
 ![Notion](https://img.shields.io/badge/Notion-000000?style=flat-square&logo=notion&logoColor=white)
 ![Slack](https://img.shields.io/badge/Slack-4A154B?style=flat-square&logo=slack&logoColor=white)
 
-<br>
+## ERD 설계
+[✔︎ erdcloud](https://www.erdcloud.com/d/g7RwRrf2vAF5KagaY)
+![StudyFlow-2](https://github.com/user-attachments/assets/bcd66d22-3a49-4f16-b1ce-284b68474354)
 
 ## 주요 기능
 ### [ 공통 기능 ]
@@ -35,8 +35,6 @@
     - 학부모의 자녀를 등록할 수 있음
     - 학생 과목별 주간평가 점수를 등록할 수 있음
     - 교사를 등록하고 교사 정보를 수정할 수 있음
-
-<br>
 
 ## API 명세
 | Domain | URL | HTTP Method | Description |
