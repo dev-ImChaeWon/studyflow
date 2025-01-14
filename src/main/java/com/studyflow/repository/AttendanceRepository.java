@@ -15,6 +15,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Attendan
 
 	public List<Attendance> findAll();
 
+	List<Attendance> findAllByStudent_studentId(Integer studentId);
 	
 	@Query("SELECT a FROM Attendance a WHERE a.id.attendanceDate = :attendanceDate")
 	List<Attendance> findByAttendanceDate(@Param("attendanceDate") Date attendanceDate);

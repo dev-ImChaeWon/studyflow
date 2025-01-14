@@ -57,7 +57,7 @@ public class BillManagementController {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 		}
 		BillManagementDTO updatedBillManagementDTO = bils.updateBillManagement(billManagementDTO);
-		return ResponseEntity.status(201).body(bils.updateBillManagement(billManagementDTO));
+		return ResponseEntity.status(201).body(bils.updateBillManagement(updatedBillManagementDTO));
 	}
 
 }

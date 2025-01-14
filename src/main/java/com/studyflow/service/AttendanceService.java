@@ -1,6 +1,8 @@
 package com.studyflow.service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,29 @@ public class AttendanceService {
 	public AttendanceService(AttendanceRepository attr, StudentRepository stur) {
 		this.attr = attr;
 		this.stur = stur;
+	}
+	
+	// 출결 가져오는 메서드
+	@Transactional
+	public List<AttendanceDTO> getAttendance(Integer studentId) {
+		List<Attendance> attendanceList = attr.findAllByStudent_studentId(studentId);
+		
+		if(attendanceList.isEmpty()) {
+			return null;
+		}
+		
+		Attendance attendance = new Attendance();
+		List<AttendanceDTO> attdtoList = new ArrayList<>();
+		
+		for(Attendance a : attendanceList) {
+			AttendanceDTO attdto = new AttendanceDTO();
+			attdto.setStudentId(studentId);
+			attdto.setIsAttend(a.getIsAttend());
+			attdto.setAttendanceDate(a.getAttendanceDate());
+			attdtoList.add(attdto);
+		}
+		
+		return attdtoList;
 	}
 	
 	// 출결 수정 및 생성 메서드
@@ -86,6 +111,7 @@ public class AttendanceService {
 //        attr.deleteById(attendanceId);
 //	}
 	
+	// 출결 삭제 메서드
 	@Transactional
     public void deleteAttendance(int studentId, Date attendanceDate) {
         // AttendanceId 생성
