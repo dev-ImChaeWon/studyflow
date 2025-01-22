@@ -1,6 +1,7 @@
 package com.studyflow.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -62,7 +63,6 @@ public class BillManagementService {
 	}
 
 	// 수납 정보 생성 및 수정 메서드
-	@Transactional
 	public BillManagementDTO updateBillManagement(BillManagementDTO billDTO) {
 		Optional<BillManagement> optionalBillManagement = bilr.findById(billDTO.getBillId());
 		BillManagement billManagement;
@@ -70,14 +70,19 @@ public class BillManagementService {
 		if (optionalBillManagement.isPresent()) {
 			billManagement = optionalBillManagement.get();
 			billManagement.setIsPay(billDTO.getIsPay());
-			billManagement.setPay(billDTO.getPay());
 			billManagement.setPayDate(billDTO.getPayDate());
+			if (billDTO.getPay() == 1) {
+				billManagement.setPay(billManagement.getPay());
+			} else {
+				billManagement.setPay(billDTO.getPay());
+			}
 		} else {
 			billManagement = new BillManagement();
+			Date now = new Date();
 			billManagement.setBillId(billDTO.getBillId());
 			billManagement.setIsPay(billDTO.getIsPay());
 			billManagement.setPay(billDTO.getPay());
-			billManagement.setPayDate(billDTO.getPayDate());
+			billManagement.setPayDate(now);
 		}
 
 		bilr.save(billManagement);

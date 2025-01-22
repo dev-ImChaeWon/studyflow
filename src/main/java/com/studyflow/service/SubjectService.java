@@ -72,6 +72,7 @@ public class SubjectService {
 	}
 
 	// 학생 id, 과목 id로 학생-과목 객체 가져오는 메서드
+	@Transactional
 	public StudentSubjectDTO getStudentSubjectByStudentIdAndSubjectId(Integer studentId, Integer subjectId) {
 		Optional<StudentSubject> optStudentSubject = stusubr.findByStudent_studentIdAndSubject_subjectId(studentId,
 				subjectId);

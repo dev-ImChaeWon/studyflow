@@ -32,6 +32,7 @@ public class AttendanceController {
 	// 학생ID로 출석 가져오는 API
 	@GetMapping("/api/attendance/{studentId}")
 	public ResponseEntity<List<AttendanceDTO>> getAttendance(@PathVariable("studentId") Integer studentId) {
+		System.out.println("Request received for studentId: " + studentId); // 디버그 로그
 		List<AttendanceDTO> res = atts.getAttendance(studentId);
 		return ResponseEntity.status(200).body(res);
 	}
