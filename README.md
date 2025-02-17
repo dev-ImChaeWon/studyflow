@@ -45,11 +45,11 @@
 | Domain | URL | HTTP Method | Description |
 | :-: | :-: | :-: | :-: |
 | Student | /api/student | Post | 학생 추가 |
-|| /api/student/{studentId} | Put | 학생 수정 |
-|| /api/all-student | Get | 모든 학생 조회 |
 || /api/test-score | Post | 테스트 점수 생성 |
-|| /api/test-score/{studentId}/{subjectId} | Put | 테스트 점수 수정 |
+|| /api/all-student | Get | 모든 학생 조회 |
 || /api/test-score | Get | 테스트 점수 조회 |
+|| /api/student/{studentId} | Put | 학생 수정 |
+|| /api/test-score/{studentId}/{subjectId} | Put | 테스트 점수 수정 |
 | Teacher | /api/teacher | Post | 선생님 추가 |
 || /api/teacher/{userId} | Delete | 선생님 삭제 |
 | Attendance | /api/attendance-update | Post | 출결 생성(수정) |
