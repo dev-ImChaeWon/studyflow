@@ -19,38 +19,38 @@ import com.studyflow.service.TeacherService;
 @Controller
 @CrossOrigin(origins = "http://localhost:8088")
 public class TeacherController {
-	
+
 	TeacherService teas;
-	
+
 	@Autowired
 	public TeacherController(TeacherService teas) {
 		this.teas = teas;
 	}
-	
-	
+
 	// 학원에 등록된 user_role이 T인 선생님을 조회하는 API
 	@GetMapping("/api/teacher")
-	public ResponseEntity<List<TeacherDTO>> getTeacherT() {	// List<TeacherDTO> 타입으로 
+	public ResponseEntity<List<TeacherDTO>> getTeacherT() { // List<TeacherDTO> 타입으로
 		List<TeacherDTO> res = teas.getTeacherT();
-		
+
 		return ResponseEntity.status(200).body(res);
 	}
-	
+
 	// 선생님 추가 API
 	@PostMapping("/api/teacher")
-	public ResponseEntity<TeacherDTO> createTeacher(@RequestBody TeacherDTO teacher){
+	public ResponseEntity<TeacherDTO> createTeacher(@RequestBody TeacherDTO teacher) {
 		return ResponseEntity.ok(teas.createTeacher(teacher));
 	}
-	
+
 	// 선생님 과목 수정 API
 	@PutMapping("/api/teacher/{userId}")
-	public ResponseEntity<TeacherDTO> updateTeacher(@PathVariable(name="userId") String userId,  @RequestBody TeacherDTO teacher){
-		return ResponseEntity.ok(teas.updateTeacher( userId, teacher));
+	public ResponseEntity<TeacherDTO> updateTeacher(@PathVariable(name = "userId") String userId,
+			@RequestBody TeacherDTO teacher) {
+		return ResponseEntity.ok(teas.updateTeacher(userId, teacher));
 	}
-	
+
 	// 선생님 삭제 API
 	@DeleteMapping("/api/teacher/{userId}")
-	public ResponseEntity<String> deleteTeacher(@PathVariable(name="userId") String userId){
-		return ResponseEntity.ok(teas.deleteTeacher( userId) ? "성공" : "실패");
+	public ResponseEntity<String> deleteTeacher(@PathVariable(name = "userId") String userId) {
+		return ResponseEntity.ok(teas.deleteTeacher(userId) ? "성공" : "실패");
 	}
 }

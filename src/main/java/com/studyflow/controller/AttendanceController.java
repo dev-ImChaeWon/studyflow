@@ -55,19 +55,8 @@ public class AttendanceController {
 
 		// 출결 업데이트
 		AttendanceDTO updatedAttendanceDTO = atts.updateAttendance(attendanceDTO);
-//	    return ResponseEntity.status(HttpStatus.CREATED).body(updatedAttendanceDTO); // 201 CREATED
 		return ResponseEntity.status(201).body(atts.updateAttendance(attendanceDTO));
 	}
-
-//	// 출결 삭제 API
-//	@DeleteMapping("/api/attendance-delete/{id}/{date}")
-//	public ResponseEntity<String> deleteAttendance(
-//			@PathVariable(name="id") int id,
-//			@PathVariable(name="date") Date date){
-//		atts.deleteAttendance(id, date);
-//		
-//		return ResponseEntity.status(200).body("출결 삭제 성공");
-//	}
 
 	@DeleteMapping("/api/attendance-delete/{studentId}/{attendanceDate}")
 	public ResponseEntity<String> deleteAttendance(@PathVariable("studentId") Integer studentId,

@@ -19,26 +19,28 @@ import com.studyflow.service.UserService;
 @CrossOrigin(origins = "http://localhost:8088")
 public class UserController {
 	UserService userService;
-	
+
 	@Autowired
 	public UserController(UserService userService) {
 		this.userService = userService;
 	}
-	
-    @PostMapping("/api/auth/signup")
-    public ResponseEntity<String> signUp(@RequestBody ParentDTO parentDTO) {
-        String message = userService.signUp(parentDTO);
-        return ResponseEntity.ok(message);
-    }
-    
-    @GetMapping("/api/auth/signup")
-    public ResponseEntity<Boolean> isDup( @RequestParam(name="id") String id, @RequestParam(name="userRole") Character role){
-    	return ResponseEntity.ok(userService.isDup(id, role));
-    }
-    @PostMapping("/api/auth/signin")
-    public ResponseEntity<HashMap<String, String>> login( @RequestBody UserDTO userDTO){
-    	
-    	return ResponseEntity.ok(userService.signIn(userDTO));
-    }
-    
+
+	@PostMapping("/api/auth/signup")
+	public ResponseEntity<String> signUp(@RequestBody ParentDTO parentDTO) {
+		String message = userService.signUp(parentDTO);
+		return ResponseEntity.ok(message);
+	}
+
+	@GetMapping("/api/auth/signup")
+	public ResponseEntity<Boolean> isDup(@RequestParam(name = "id") String id,
+			@RequestParam(name = "userRole") Character role) {
+		return ResponseEntity.ok(userService.isDup(id, role));
+	}
+
+	@PostMapping("/api/auth/signin")
+	public ResponseEntity<HashMap<String, String>> login(@RequestBody UserDTO userDTO) {
+
+		return ResponseEntity.ok(userService.signIn(userDTO));
+	}
+
 }

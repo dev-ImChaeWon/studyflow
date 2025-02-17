@@ -37,18 +37,11 @@ public class StudentController {
 		this.stus = stus;
 		this.tests = tests;
 	}
-	
+
 	// 부모의 id로 자녀와 자녀정보 가져오기 API
 	@GetMapping("/api/parent-student-info")
-	public List<StudentSubjectDTO> getParentStudentInfo(
-			@RequestParam(name = "parentId") String parentId){
+	public List<StudentSubjectDTO> getParentStudentInfo(@RequestParam(name = "parentId") String parentId) {
 		return stus.getParentStudentInfo(parentId);
-	}
-
-	// 부모-학생 객체 등록 API
-	@PostMapping("/api/parent-student")
-	public ResponseEntity<StudentParentDTO> createStudentParent(@RequestBody StudentParentDTO studentParentDTO) {
-		return ResponseEntity.ok(stus.createStudentParent(studentParentDTO));
 	}
 
 	// 부모 id로 학생 id 조회 API
@@ -76,28 +69,6 @@ public class StudentController {
 			@RequestParam(name = "weeklyTestDate", required = true) Date weeklyTestDate) {
 		PageResponse<TestScoreDTO> res = tests.getTestScore(page, size, studentId, subjectId, weeklyTestDate);
 		return ResponseEntity.status(200).body(res);
-	}
-
-	// 테스트 점수 생성 API
-	@PostMapping("/api/test-score")
-	public ResponseEntity<TestScoreDTO> createTestScore(@RequestBody TestScoreDTO testScoreDTO) {
-		try {
-			// 서비스 계층을 호출하여 점수 생성
-			TestScoreDTO createdTestScore = tests.createTestScore(testScoreDTO);
-
-			// 성공적으로 생성된 경우 201 Created 응답
-			return ResponseEntity.status(HttpStatus.CREATED).body(createdTestScore);
-		} catch (Exception e) {
-			// 기타 예기치 않은 예외 발생 시 500 Internal Server Error 응답
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-		}
-	}
-
-	// 테스트 점수 수정 API
-	@PutMapping("/api/test-score/{studentId}/{subjectId}")
-	public ResponseEntity<TestScoreDTO> updateTestScore(@PathVariable(name = "studentId") int studentId,
-			@RequestBody TestScoreDTO testScore, @PathVariable(name = "subjectId") int subjectId) {
-		return ResponseEntity.ok(tests.updateTestScore(studentId, subjectId, testScore));
 	}
 
 	// 날짜별 출결 여부 조회 API
@@ -128,9 +99,7 @@ public class StudentController {
 			@RequestParam(name = "studentName", required = false) String studentName) {
 
 		PageResponse<StudentDTO> res = stus.getStudent2(page, size, date, teacherId, homeworkStatus, studentName);
-//		stus.getStudent2(page, size, date, teacherId, homeworkStatus, studentName);
 		return ResponseEntity.status(200).body(res);
-
 	}
 
 	// 과목 이름으로 학생 불러오는 API
@@ -140,10 +109,38 @@ public class StudentController {
 		return stus.getStudentsBySubjectName(subjectId);
 	}
 
+	// 부모-학생 객체 등록 API
+	@PostMapping("/api/parent-student")
+	public ResponseEntity<StudentParentDTO> createStudentParent(@RequestBody StudentParentDTO studentParentDTO) {
+		return ResponseEntity.ok(stus.createStudentParent(studentParentDTO));
+	}
+
+	// 테스트 점수 생성 API
+	@PostMapping("/api/test-score")
+	public ResponseEntity<TestScoreDTO> createTestScore(@RequestBody TestScoreDTO testScoreDTO) {
+		try {
+			// 서비스 계층을 호출하여 점수 생성
+			TestScoreDTO createdTestScore = tests.createTestScore(testScoreDTO);
+
+			// 성공적으로 생성된 경우 201 Created 응답
+			return ResponseEntity.status(HttpStatus.CREATED).body(createdTestScore);
+		} catch (Exception e) {
+			// 기타 예기치 않은 예외 발생 시 500 Internal Server Error 응답
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+		}
+	}
+
 	// 학생 추가하는 API
 	@PostMapping("api/student")
 	public ResponseEntity<StudentDTO> createStudent(@RequestBody StudentDTO student) {
 		return ResponseEntity.ok(stus.createStudent(student));
+	}
+
+	// 테스트 점수 수정 API
+	@PutMapping("/api/test-score/{studentId}/{subjectId}")
+	public ResponseEntity<TestScoreDTO> updateTestScore(@PathVariable(name = "studentId") int studentId,
+			@RequestBody TestScoreDTO testScore, @PathVariable(name = "subjectId") int subjectId) {
+		return ResponseEntity.ok(tests.updateTestScore(studentId, subjectId, testScore));
 	}
 
 	// 학생 수정하는 API
