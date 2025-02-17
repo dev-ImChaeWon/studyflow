@@ -45,17 +45,40 @@
 ## API 명세
 | Domain | URL | HTTP Method | Description |
 | :-: | :-: | :-: | :-: |
-| Student | /api/student | Post | 학생 추가 |
-|| /api/test-score | Post | 테스트 점수 생성 |
-|| /api/all-student | Get | 모든 학생 조회 |
+| Student | /api/all-student | Get | 모든 학생 조회 |
+|| /api/student | Get | 학생 조건별 숙제 조회 |
+|| /api/student-by-subject | Get | 과목별 학생 조회 |
 || /api/test-score | Get | 테스트 점수 조회 |
-|| /api/student/{studentId} | Put | 학생 수정 |
+|| /api/attendance | Get | 날짜별 출결 조회 |
+|| /api/parent-student-info | Get | 부모ID로 학생 조회 |
+|| /api/student | Post | 학생 신규 생성 |
+|| /api/test-score | Post | 테스트 점수 생성 |
+|| /api/parent-student | Post | 부모-학생 관계 등록 |
+|| /api/student/{studentId} | Put | 학생 정보 수정 |
 || /api/test-score/{studentId}/{subjectId} | Put | 테스트 점수 수정 |
 | Teacher | /api/teacher | Post | 선생님 추가 |
+|| /api/teacher | Get | 선생님 신규 생성 |
+|| /api/teacher/{userId} | Put | 선생님 정보 수정 |
 || /api/teacher/{userId} | Delete | 선생님 삭제 |
 | Attendance | /api/attendance-update | Post | 출결 생성(수정) |
+|| /api/attendance/{studentId} | Get | 출결 조회 |
 || /api/attendance-delete/{studentId}/{attendanceDate} | Delete | 출결 삭제 |
 | Homework | /api/homework-create | Post | 숙제 생성 |
 || /api/homework-update | Post | 숙제 수정 |
-| Subject | /api/subject | Post | 과목 추가 |
+|| /api/student-homework/{id} | Get | 숙제 조회 |
+|| /api/student-homework | Get | ID, 날짜별 숙제 조회 |
+| Subject | /api/student-subject/{id} | Get | id별 학생-과목 객체 조회 |
+|| /api/subject | Get | 과목 조회 |
+|| /api/teacher-subject/{userId} | Get | 교사ID별 과목 조회 |
+|| /api/student-subject | Get | 학생ID별 과목 조회 |
+|| /api/student-subject/{studentId}/{subjectId} | Get | (학생, 과목)ID로 학생-과목 객체 조회 |
+|| /api/subject | Post | 과목 신규 생성 |
+|| /api/student-subject | Post | 학생-과목 관계 등록 |
 || /api/subject/{subjectId} | Delete | 과목 삭제 |
+| Parent | /api/parent | Get | 부모 조회 |
+| BillManagement | /api/bill-management/{id} | Get | (학생, 과목)ID로 수납 정보 조회 |
+|| /api/bill-management | Get | 수납 정보 조회 |
+|| /api/bill-management-update | Post | 수납 정보 생성 및 수정 |
+| User | /api/auth/signup | Post | 계정 신규 생성 |
+|| /api/auth/signup | Get | 계정 조회 |
+|| /api/auth/signin | Post | 로그인 |
